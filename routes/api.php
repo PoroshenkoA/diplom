@@ -1,0 +1,58 @@
+<?php
+
+use Illuminate\Http\Request;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+Route::middleware('auth:api')->get('/notifications', 'API\NotificationsController@index');
+Route::middleware('auth:api')->post('/hideNote', 'API\NotificationsController@hideNote');
+Route::middleware('auth:api')->get('/hideAllNotes', 'API\NotificationsController@hideAllNotes');
+
+Route::middleware('auth:api')->get('/adminUserNotes/{name}', 'API\AdminController@userNotes');
+Route::middleware('auth:api')->get('/adminUser/{name}', 'API\AdminController@user');
+Route::middleware('auth:api')->get('/adminDateNotes/{date}', 'API\AdminController@dateNotes');
+Route::middleware('auth:api')->get('/adminMakeWorks', 'API\AdminController@makeWorks');
+
+
+Route::middleware('auth:api')->get('/work', 'API\StudentController@work');
+Route::middleware('auth:api')->get('/getLeaders', 'API\StudentController@leaders');
+Route::middleware('auth:api')->get('/requests', 'API\StudentController@requests');
+Route::middleware('auth:api')->post('/createRequest', 'API\StudentController@createRequest');
+Route::middleware('auth:api')->post('/studChangeThemeEn', 'API\StudentController@studChangeThemeEn');
+Route::middleware('auth:api')->post('/studChangeThemeUkr', 'API\StudentController@studChangeThemeUkr');
+Route::middleware('auth:api')->post('/studChangeDate', 'API\StudentController@studChangeDate');
+Route::middleware('auth:api')->get('/studGetAvDates', 'API\StudentController@getDates');
+
+
+Route::middleware('auth:api')->get('/getStudents', 'API\LeaderController@students');
+Route::middleware('auth:api')->get('/getLeaderWorks', 'API\LeaderController@works');
+Route::middleware('auth:api')->get('/getLeaderType', 'API\LeaderController@getType');
+Route::middleware('auth:api')->post('/leaderChangeThemeEn', 'API\LeaderController@leaderChangeThemeEn');
+Route::middleware('auth:api')->post('/leaderChangeThemeUkr', 'API\LeaderController@leaderChangeThemeUkr');
+
+
+Route::middleware('auth:api')->get('/getExaminerWorks', 'API\ExaminerController@works');
+
+Route::middleware('auth:api')->post('/deleteRequest', 'API\StudentController@deleteRequest');
+Route::middleware('auth:api')->post('/deleteWork', 'API\AdminController@deleteWork');
+Route::middleware('auth:api')->post('/makeNot', 'API\NotificationsController@makeNot');
+Route::middleware('auth:api')->post('/makeAdminNote', 'API\NotificationsController@makeAdminNote');
+Route::middleware('auth:api')->post('/makeExaminerNote', 'API\NotificationsController@makeExaminerNote');
+Route::middleware('auth:api')->post('/editPrior', 'API\StudentController@editPrior');
+Route::middleware('auth:api')->post('/adminNewUsername', 'API\AdminController@newUsername');
+Route::middleware('auth:api')->post('/adminNewEmail', 'API\AdminController@newEmail');
+Route::middleware('auth:api')->post('/updateLeaderPriority', 'API\LeaderController@updateLeaderPriority');
