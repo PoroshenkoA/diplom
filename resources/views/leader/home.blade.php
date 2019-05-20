@@ -18,6 +18,7 @@
                         <thead>
                         <tr>
                             <th scope="col">Имя</th>
+                            <th scope="col">Группа</th>
                             <th scope="col">Приоритет</th>
                             <th scope="col">Виза</th>
                         </tr>
@@ -26,6 +27,9 @@
                         <tr v-for="(item,key) in students">
                             <td>
                                 <div style="display: inline-block;">@{{item.name}}</div>
+                            </td>
+                            <td>
+                                <div style="display: inline-block;">@{{item.groupName}}</div>
                             </td>
                             <td>
                                 <select v-model="item.newPrior" class="custom-select" id="inputGroupSelect01">
@@ -58,103 +62,399 @@
             </div>
             <div v-if="works.length != 0">
                 <p style="margin-top: 20px" align="center">Работы</p>
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col">Имя студента</th>
-                        <th scope="col">Тема на английском</th>
-                        <th scope="col">Тема на украинском</th>
-                        <th scope="col">Дата защиты</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="item in works">
-                        <td>@{{item.studName}}</td>
-                        <td>
-                            <span v-show="!item.editThemeEn">@{{item.themeEn}}</span>
-                            <div style="display: inline-block;margin-right: 20px; float: right;">
-                                <div v-show="!item.editThemeEn" @click="item.editThemeEn=true"
-                                     class="btn-sm btn-primary"><i
-                                            class="fa fa-pencil" aria-hidden="false"></i>
-                                </div>
+                <div style="margin-top: 20px" v-for="(item,key) in works">
+                    <a style="margin-left: 20px" href="#" @click="item.toggle=!item.toggle">@{{item.studName}}</a>
+                    <div style="margin-left: 40px" v-if="item.toggle===true">
+                        <table class="table table-sm" border="0">
+                            <tbody>
+                            <tr>
+                                <td width="200px">Тема на английском</td>
+                                <td>
+                                    <span v-show="!item.editThemeEn">@{{item.themeEn}}</span>
+                                    <div v-show="item.editThemeEn" class="input-group mb-3">
+                                        <input v-model="item.newThemeEn" type="text" class="form-control"
+                                               aria-label="Name"
+                                               aria-describedby="button-addon2">
+                                        <div class="input-group-append">
+                                            <button @click="editEn(item)" class="btn btn-outline-secondary"
+                                                    type="button"
+                                                    id="button-addon2">ОК
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td width="10%">
+                                    <div style="display: inline-block;margin-right: 20px; float: right;">
+                                        <div v-show="!item.editThemeEn" @click="item.editThemeEn=true"
+                                             class="btn-sm btn-primary"><i
+                                                    class="fa fa-pencil" aria-hidden="false"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Тема на украинском</td>
+                                <td>
+                                    <span v-show="!item.editThemeUkr">@{{item.themeUkr}}</span>
+                                    <div v-show="item.editThemeUkr" class="input-group mb-3">
+                                        <input v-model="item.newThemeUkr" type="text" class="form-control"
+                                               aria-label="Name"
+                                               aria-describedby="button-addon2">
+                                        <div class="input-group-append">
+                                            <button @click="editUkr(item)" class="btn btn-outline-secondary"
+                                                    type="button"
+                                                    id="button-addon2">ОК
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: inline-block;margin-right: 20px; float: right;">
+                                        <div v-show="!item.editThemeUkr" @click="item.editThemeUkr=true"
+                                             class="btn-sm btn-primary"><i
+                                                    class="fa fa-pencil" aria-hidden="false"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Дата защиты</td>
+                                <td>
+                                    <span>@{{item.date}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Записка</td>
+                                <td>
+                                    <div v-show="item.file !== null && !item.editFile">
+                                        <a id="link" style="display: inline-block;" :href="'/download/'+item.file"><i
+                                                    class="icon-download-alt"> </i>Скачать&nbsp;</a>
+                                    </div>
+                                    <div v-show="item.editFile" class="input-group">
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <input type="file" style="display: none" :id="'file'+key"
+                                                   @change="onFileChange">
+                                            <label :for="'file'+key" class="btn btn-secondary">Выбрать</label>
+                                            <label type="button" @click="sendFile(item)"
+                                                   class="btn btn-secondary">ОК</label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: inline-block;margin-right: 20px; float: right;">
+                                        <div v-show="!item.editFile" @click="item.editFile=true"
+                                             class="btn-sm btn-primary"><i
+                                                    class="fa fa-pencil" aria-hidden="false"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Количество страниц в записке</td>
+                                <td>
+                                    <span v-show="!item.editRealPages">@{{item.realPages}}</span>
+                                    <div v-show="item.editRealPages" class="input-group mb-3">
+                                        <input v-model="item.realPages" type="text" class="form-control"
+                                               aria-label="Name"
+                                               aria-describedby="button-addon2">
+                                        <div class="input-group-append">
+                                            <button @click="editRP(item)" class="btn btn-outline-secondary"
+                                                    type="button"
+                                                    id="button-addon2">ОК
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: inline-block;margin-right: 20px; float: right;">
+                                        <div v-show="!item.editRealPages" @click="item.editRealPages=true"
+                                             class="btn-sm btn-primary"><i
+                                                    class="fa fa-pencil" aria-hidden="false"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Количество слайдов в презентации</td>
+                                <td>
+                                    <span v-show="!item.editPresentationPages">@{{item.graphicPages}}</span>
+                                    <div v-show="item.editPresentationPages" class="input-group mb-3">
+                                        <input v-model="item.graphicPages" type="text" class="form-control"
+                                               aria-label="Name"
+                                               aria-describedby="button-addon2">
+                                        <div class="input-group-append">
+                                            <button @click="editGP(item)" class="btn btn-outline-secondary"
+                                                    type="button"
+                                                    id="button-addon2">ОК
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: inline-block;margin-right: 20px; float: right;">
+                                        <div v-show="!item.editPresentationPages"
+                                             @click="item.editPresentationPages=true"
+                                             class="btn-sm btn-primary"><i
+                                                    class="fa fa-pencil" aria-hidden="false"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr v-if="item.r1n !== null">
+                                <td>Первый рецензент</td>
+                                <td>
+                                    <span><strong>Имя: </strong>@{{ item.r1n }}</span>
+                                    <p></p>
+                                    <span><strong>Место работы: </strong>@{{ item.r1w }}</span>
+                                    <p></p>
+                                    <span><strong>Должность: </strong> @{{ item.r1p }}</span>
+                                    <p></p>
+                                    <span><strong>Научная степень: </strong> @{{ item.r1d }}</span>
+                                </td>
+                                <td>
+                                    <div style="display: inline-block;margin-right: 20px; float: right;" @click="delRev1(item)"
+                                         class="btn-sm btn-danger"><i
+                                                class="fa fa-times" aria-hidden="true"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr v-if="item.r2n !== null">
+                                <td>Второй рецензент</td>
+                                <td>
+                                    <span><strong>Имя: </strong>@{{ item.r2n }}</span>
+                                    <p></p>
+                                    <span><strong>Место работы: </strong>@{{ item.r2w }}</span>
+                                    <p></p>
+                                    <span><strong>Должность: </strong> @{{ item.r2p }}</span>
+                                    <p></p>
+                                    <span><strong>Научная степень: </strong> @{{ item.r2d }}</span>
+                                </td>
+                                <td>
+                                    <div style="display: inline-block;margin-right: 20px; float: right;" @click="delRev2(item)"
+                                         class="btn-sm btn-danger"><i
+                                                class="fa fa-times" aria-hidden="true"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr v-if="item.questions[0]">
+                                <td>Вопросы</td>
+                                <td colspan="2">
+                                    <table class="table table-sm" border="0">
+                                        <tr>
+                                            <th>Экзаменатор</th>
+                                            <th>Вопрос</th>
+                                            <th>Оценка</th>
+                                        </tr>
+                                        <tr v-for="ques in item.questions">
+                                            <td><strong>@{{ ques.name}}</strong></td>
+                                            <td>@{{ ques.question }}</td>
+                                            <td><h3>@{{ ques.examinerRate }}</h3></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Протокол</td>
+                                <td>
+                                    <h3 style="margin-left: 30%">@{{item.prot}}</h3>
+                                </td>
+                            </tr>
+                            <tr v-if="item.rate !== null">
+                                <td>Оценка</td>
+                                <td>
+                                    <h3 style="margin-left: 30%">@{{item.rate}}</h3>
+                                </td>
+                            </tr>
+                            <tr v-if="item.rate !== null">
+                                <td>Оценка в национальной шкале</td>
+                                <td>
+                                    <h3 style="margin-left: 30%" v-if="item.rate<60">Незадовільно</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>=60 && item.rate<75">Задовільно</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>=75 && item.rate<90 ">Добре</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>90">Відмінно</h3>
+                                </td>
+                            </tr>
+                            <tr v-if="item.rate !== null">
+                                <td>Оценка в европейской шкале</td>
+                                <td>
+                                    <h3 style="margin-left: 30%" v-if="item.rate<60">F</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>=60 && item.rate<75">E</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>=75 && item.rate<90 ">C</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>90 && item.rate<96 ">B</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>96">A</h3>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                    <span v-if="item.addRev===false && (item.rev1===null || item.rev2===null)"
+                          class="btn btn-outline-secondary" @click="item.addRev=true">
+                        Добавить рецензента
+                    </span>
+                            <div v-if="item.addRev===true">
+                                <input v-model="item.newRN" type="text" class="form-control" aria-label="Name"
+                                       aria-describedby="button-addon2" placeholder="ФИО">
+                                <input v-model="item.newRW" type="text" class="form-control" aria-label="Name"
+                                       aria-describedby="button-addon2" placeholder="Место работы">
+                                <input v-model="item.newRP" type="text" class="form-control" aria-label="Name"
+                                       aria-describedby="button-addon2" placeholder="Должность">
+                                <input v-model="item.newRD" type="text" class="form-control" aria-label="Name"
+                                       aria-describedby="button-addon2" placeholder="Научная степень">
+                                <button style="margin-top: 10px;" @click="addNewRev(item)"
+                                     class="btn-sm btn-primary">Добавить
+                                </button>
                             </div>
-                            <div v-show="item.editThemeEn" class="input-group mb-3">
-                                <input v-model="item.newThemeEn" type="text" class="form-control" aria-label="Name"
-                                       aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button @click="editEn(item)" class="btn btn-outline-secondary" type="button"
-                                            id="button-addon2">ОК
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span v-show="!item.editThemeUkr">@{{item.themeUkr}}</span>
-                            <div style="display: inline-block;margin-right: 20px; float: right;">
-                                <div v-show="!item.editThemeUkr" @click="item.editThemeUkr=true"
-                                     class="btn-sm btn-primary"><i
-                                            class="fa fa-pencil" aria-hidden="false"></i>
-                                </div>
-                            </div>
-                            <div v-show="item.editThemeUkr" class="input-group mb-3">
-                                <input v-model="item.newThemeUkr" type="text" class="form-control" aria-label="Name"
-                                       aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button @click="editUkr(item)" class="btn btn-outline-secondary" type="button"
-                                            id="button-addon2">ОК
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td>@{{item.date}}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div v-if="likeNormal===false">
-            <div v-if="worksEx.length != 0">
+            <div v-if="works.length != 0">
                 <p style="margin-top: 20px" align="center">Работы</p>
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col">Имя студента</th>
-                        <th scope="col">Имя руководителя</th>
-                        <th scope="col">Тема на английском</th>
-                        <th scope="col">Тема на украинском</th>
-                        <th scope="col">Дата защиты</th>
-                        <th scope="col">Известить о проблеме</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="item in worksEx">
-                        <td>@{{item.studName}}</td>
-                        <td>@{{item.leaderName}}</td>
-                        <td>@{{item.themeEn}}</td>
-                        <td>@{{item.themeUkr}}</td>
-                        <td>@{{item.date}}</td>
-                        <td>
-                            <div>
-                                <div style="display: inline-block;margin-left: 10px;" v-show="!item.edit"
-                                     @click="item.edit=!item.edit"
-                                     class="btn-sm btn-primary"><i
-                                            class="fa fa-pencil" aria-hidden="true"></i>
-                                </div>
+                <div style="margin-bottom: 20px" v-for="(item,key) in worksEx">
+                    <a style="margin-left: 20px" href="#" @click="item.toggle=!item.toggle">@{{item.groupName+" "+item.studName}}</a>
+                    <div style="display: inline-block; float:right; margin-right: 10px">
+                        <div style="display: inline-block;margin-left: 10px;" v-show="!item.edit" @click="item.edit=!item.edit"
+                             class="btn-sm btn-primary"><i
+                                    class="fa fa-pencil" aria-hidden="true"></i></div>
+                        <div v-show="item.edit" class="input-group mb-3">
+                            <input v-model="item.newNote" type="text" class="form-control" aria-label="Name"
+                                   aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <button @click="send(item)" class="btn btn-outline-secondary" type="button"
+                                        id="button-addon2">ОК
+                                </button>
                             </div>
-                            <div v-show="item.edit" class="input-group mb-3">
-                                <input v-model="item.newNote" type="text" class="form-control" aria-label="Name"
-                                       aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button @click="sendExaminerNote(item)" class="btn btn-outline-secondary"
-                                            type="button"
-                                            id="button-addon2">ОК
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        </div>
+                    </div>
+                    <div style="margin-left: 50px; margin-top: 15px" v-if="item.toggle===true">
+                        <table class="table table-sm" border="0">
+                            <tbody>
+                            <tr>
+                                <td width="200px">Имя руководителя</td>
+                                <td>
+                                    <span >@{{item.leaderName}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="200px">Тема на английском</td>
+                                <td>
+                                    <span >@{{item.themeEn}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Тема на украинском</td>
+                                <td>
+                                    <span >@{{item.themeUkr}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Дата защиты</td>
+                                <td>
+                                    <span>@{{item.date}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Записка</td>
+                                <td>
+                                    <div v-show="item.file !== null && !item.editFile">
+                                        <a id="link" style="display: inline-block;" :href="'/download/'+item.file"><i
+                                                    class="icon-download-alt"> </i>Скачать&nbsp;</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Количество страниц в записке</td>
+                                <td>
+                                    <span>@{{item.realPages}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Количество слайдов в презентации</td>
+                                <td>
+                                    <span>@{{item.graphicPages}}</span>
+                                </td>
+                            </tr>
+                            <tr v-if="item.r1n !== null">
+                                <td>Первый рецензент</td>
+                                <td>
+                                    <span><strong>Имя: </strong>@{{ item.r1n }}</span>
+                                    <p></p>
+                                    <span><strong>Место работы: </strong>@{{ item.r1w }}</span>
+                                    <p></p>
+                                    <span><strong>Должность: </strong> @{{ item.r1p }}</span>
+                                    <p></p>
+                                    <span><strong>Научная степень: </strong> @{{ item.r1d }}</span>
+                                </td>
+                            </tr>
+                            <tr v-if="item.r2n !== null">
+                                <td>Второй рецензент</td>
+                                <td>
+                                    <span><strong>Имя: </strong>@{{ item.r2n }}</span>
+                                    <p></p>
+                                    <span><strong>Место работы: </strong>@{{ item.r2w }}</span>
+                                    <p></p>
+                                    <span><strong>Должность: </strong> @{{ item.r2p }}</span>
+                                    <p></p>
+                                    <span><strong>Научная степень: </strong> @{{ item.r2d }}</span>
+                                </td>
+                            </tr>
+                            <tr v-if="item.questions[0]">
+                                <td>Вопросы</td>
+                                <td colspan="2">
+                                    <table class="table table-sm" border="0">
+                                        <tr>
+                                            <th>Экзаменатор</th>
+                                            <th>Вопрос</th>
+                                            <th>Оценка</th>
+                                        </tr>
+                                        <tr v-for="ques in item.questions">
+                                            <td><strong>@{{ ques.name}}</strong></td>
+                                            <td>@{{ ques.question }}</td>
+                                            <td><h3>@{{ ques.examinerRate }}</h3></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr v-if="item.prot !== null">
+                                <td>Протокол</td>
+                                <td>
+                                    <h3 style="margin-left: 30%">@{{item.prot}}</h3>
+                                </td>
+                            </tr>
+                            <tr v-if="item.rate !== null">
+                                <td>Оценка</td>
+                                <td>
+                                    <h3 style="margin-left: 30%">@{{item.rate}}</h3>
+                                </td>
+                            </tr>
+                            <tr v-if="item.rate !== null">
+                                <td>Оценка в национальной шкале</td>
+                                <td>
+                                    <h3 style="margin-left: 30%" v-if="item.rate<60">Незадовільно</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>=60 && item.rate<75">Задовільно</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>=75 && item.rate<90 ">Добре</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>90">Відмінно</h3>
+                                </td>
+                            </tr>
+                            <tr v-if="item.rate !== null">
+                                <td>Оценка в европейской шкале</td>
+                                <td>
+                                    <h3 style="margin-left: 30%" v-if="item.rate<60">F</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>=60 && item.rate<75">E</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>=75 && item.rate<90 ">C</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>90 && item.rate<96 ">B</h3>
+                                    <h3 style="margin-left: 30%" v-if="item.rate>96">A</h3>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div v-else>
+                <span>Работ пока нет</span>
             </div>
         </div>
         <div style="margin-top: 20px;" align="center">
@@ -173,7 +473,7 @@
                 <td>@{{item.date}}</td>
                 <td>@{{item.text}}</td>
                 <td>
-                    <div style="display: inline-block; float" @click="hideNote(item)"
+                    <div style="display: inline-block;" @click="hideNote(item)"
                          class="btn-sm btn-danger"><i
                                 class="fa fa-times" aria-hidden="true"></i>
                     </div>
@@ -202,6 +502,7 @@
                 worksEx: [],
                 type: "2",
                 likeNormal: null,
+                file: null,
             },
             methods: {
                 hideNote: function (item) {
@@ -216,28 +517,6 @@
                         });
                     } else alert("Нельзя удалить сообщение администратора");
                 },
-                editEn: function (item) {
-                    if (item.newThemeEn !== "" && item.newThemeEn !== item.themeEn) {
-                        let data = {data: item}
-                        this.$http.post('/api/leaderChangeThemeEn', data)
-                            .then(function () {
-                                alert("Готово!");
-                                item.themeEn = item.newThemeEn;
-                            });
-                    }
-                    item.editThemeEn = false;
-                },
-                editUkr: function (item) {
-                    if (item.newThemeUkr !== "" && item.newThemeUkr !== item.themeUkr) {
-                        let data = {data: item}
-                        this.$http.post('/api/leaderChangeThemeUkr', data)
-                            .then(function () {
-                                alert("Готово!");
-                                item.themeUkr = item.newThemeUkr;
-                            });
-                    }
-                    item.editThemeUkr = false;
-                },
                 hideAllNotes: function () {
                     var _this = this;
                     this.$http.get('/api/hideAllNotes').then(function (response) {
@@ -248,7 +527,6 @@
                     });
                 },
                 send: function () {
-                    alert("Готово!");
                     var _this = this;
                     let arr = [];
                     for (var item in this.students) {
@@ -284,7 +562,120 @@
                             _this.worksEx = response.data.works;
                         });
                 },
-
+                addNewRev: function (item) {
+                    var _this = this;
+                    if (item.newRD === '' || item.newRW === '' || item.newRP === '' || item.newRN === '') {
+                        return alert("Заполните все поля");
+                        ;
+                    }
+                    if (item.rev1 && item.rev2) {
+                        return alert("Нет мест");
+                        ;
+                    }
+                    let data = {
+                        name: item.newRN,
+                        wp: item.newRW,
+                        d: item.newRD,
+                        p: item.newRP,
+                        studentID: item.studentID
+                    };
+                    _this.$http.post('/api/leaderAddNewRev', data).then(function (response) {
+                        if (item.rev1) {
+                            item.rev2 = response.data.id;
+                            item.r2n = item.newRN;
+                            item.r2d = item.newRD;
+                            item.r2w = item.newRW;
+                            item.r2p = item.newRP;
+                            item.newRN='';
+                            item.newRD='';
+                            item.newRW='';
+                            item.newRP='';
+                        } else {
+                            item.rev1 = response.data.id;
+                            item.r1n = item.newRN;
+                            item.r1d = item.newRD;
+                            item.r1w = item.newRW;
+                            item.r1p = item.newRP;
+                            item.newRN='';
+                            item.newRD='';
+                            item.newRW='';
+                            item.newRP='';
+                        }
+                        item.addRev = false;
+                    });
+                },
+                editRP: function (item) {
+                    let data = {data: item}
+                    this.$http.post('/api/leaderEditRealPages', data)
+                    item.editRealPages = false;
+                },
+                delRev1: function (item) {
+                    let data = {id: item.rev1}
+                    this.$http.post('/api/leaderDelRev', data)
+                    item.rev1 = null;
+                    item.r1n = null;
+                    item.r1w = null;
+                    item.r1p = null;
+                    item.r1d = null;
+                },
+                delRev2: function (item) {
+                    let data = {id: item.rev2}
+                    this.$http.post('/api/leaderDelRev', data)
+                    item.rev2 = null;
+                    item.r2n = null;
+                    item.r2w = null;
+                    item.r2p = null;
+                    item.r2d = null;
+                },
+                editGP: function (item) {
+                    let data = {data: item}
+                    this.$http.post('/api/leaderEditGPages', data)
+                    item.editPresentationPages = false;
+                },
+                editEn: function (item) {
+                    if (item.newThemeEn !== "" && item.newThemeEn !== item.themeEn) {
+                        let data = {data: item}
+                        this.$http.post('/api/leaderChangeThemeEn', data)
+                            .then(function () {
+                                item.themeEn = item.newThemeEn;
+                            });
+                    }
+                    item.editThemeEn = false;
+                },
+                editUkr: function (item) {
+                    if (item.newThemeUkr !== "" && item.newThemeUkr !== item.themeUkr) {
+                        let data = {data: item}
+                        this.$http.post('/api/leaderChangeThemeUkr', data)
+                            .then(function () {
+                                item.themeUkr = item.newThemeUkr;
+                            });
+                    }
+                    item.editThemeUkr = false;
+                },
+                onFileChange(e) {
+                    var files = e.target.files || e.dataTransfer.files;
+                    if (!files.length)
+                        return;
+                    this.file = files[0];
+                },
+                sendFile: function (item) {
+                    if (item.newFile !== null) {
+                        var _this = this;
+                        var formData = new FormData();
+                        formData.append('file', _this.file);
+                        formData.append('uuid', item.file);
+                        formData.append('studentID', item.studentID);
+                        _this.$http.post('/api/leaderSendFile', formData)
+                            .then(function (response) {
+                                item.editFile = false;
+                                item.file = response.data.docName;
+                            }).catch(function (respond) {
+                            item.editFile = false;
+                            alert("Неверный тип файла")
+                        });
+                    }
+                    item.editFile = false;
+                },
             },
             created: function () {
                 var _this = this;

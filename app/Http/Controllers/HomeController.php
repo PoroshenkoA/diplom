@@ -34,5 +34,15 @@ class HomeController extends Controller
         if($user->userTypeID == 4)
             return view('admin\home');
     }
+
+    public function download($uuid)
+    {
+        $headers = [
+            'Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition: attachment;filename="' . $uuid . '"',
+        ];
+        return response()->download(storage_path('app/public/' . $uuid), $uuid, $headers);
+
+    }
     
 }

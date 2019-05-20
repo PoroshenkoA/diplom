@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class StudentController extends Controller
 {
@@ -15,17 +16,28 @@ class StudentController extends Controller
             ->leftJoin("users as u", "w.studentID", "=", "u.id")
             ->leftJoin("users as u2", "w.leaderID", "=", "u2.id")
             ->leftJoin("dateDef as d", "w.dateID", "=", "d.id")
-            ->select("u2.id as leaderID", "u2.name as leaderName", "w.themeEn", "w.themeUkr", "d.date as date")
+            ->leftJoin("reviews as r1", "w.rev1", "=", "r1.id")
+            ->leftJoin("reviews as r2", "w.rev2", "=", "r2.id")
+            ->leftJoin("protections as p", "w.id", "=", "p.workID")
+            ->select("u2.id as leaderID", "u2.name as leaderName", "w.themeEn", "w.id as id",
+                "w.themeUkr", "d.date as date", "w.file", "w.realPages","graphicPages",
+                "w.rev1 as rev1", "r1.name as r1n", "r1.workplace as r1w", "r1.degree as r1d", "r1.post as r1p",
+                "w.rev2 as rev2", "r2.name as r2n", "r2.workplace as r2w", "r2.degree as r2d", "r2.post as r2p", "p.id as pID", "p.rate", "p.protocol as prot")
             ->where('w.studentID', Auth::user()->id)
             ->get()
             ->transform(function ($item) {
                 $item->newThemeEn = $item->themeEn;
                 $item->newThemeUkr = $item->themeUkr;
                 $item->newDate = $item->date;
+                $item->questions=DB::table("questions as q")
+                    ->leftJoin("users as u", "q.examinerID", "=", "u.id")
+                    ->select("question","examinerRate", "u.name")
+                    ->where("protID", $item->pID)
+                    ->get();
                 return $item;
             });
-        if (!isset($work->leaderID)){
-            $work = false;
+        if(isset($work->id)){
+            $work=false;
         }
         return response()->json(compact('work'));
     }
@@ -70,7 +82,7 @@ class StudentController extends Controller
             ->get()
             ->transform(function ($item) {
                 $item->edit = false;
-                $item->newPrior = 1;
+                $item->newPrior = $item->studentPriority;
                 return $item;
             });
         return response()->json(compact("requests"));
@@ -101,6 +113,75 @@ class StudentController extends Controller
         }
     }
 
+    public function DelRev(Request $request)
+    {
+        DB::table("works")
+            ->where('rev1', $request->id)
+            ->update(['rev1' => null]);
+        DB::table("works")
+            ->where('rev2', $request->id)
+            ->update(['rev2' => null]);
+        DB::table("reviews")
+            ->where('id', $request->id)
+            ->delete();
+    }
+
+    public function addRev(Request $request)
+    {
+        DB::table("reviews")
+            ->insert(['name' => $request->name, 'workplace' => $request->wp, 'degree' => $request->d, 'post' => $request->p]);
+        $rev=DB::table("reviews")->orderBy("id", "desc")->first();
+        $id=$rev->id;
+        $work=DB::table("works")
+            ->select("rev1", "rev2")
+            ->where("studentID",Auth::user()->id)
+            ->first();
+        if($work->rev1 === null){
+            DB::table("works")
+                ->where('studentID', Auth::user()->id)
+                ->update(['rev1' => $id]);
+        } else {
+            DB::table("works")
+                ->where('studentID', Auth::user()->id)
+                ->update(['rev2' => $id]);
+        }
+        DB::table("notifications")
+            ->insert(['userID' => $request->leaderID, 'text' => "Судент ".Auth::user()->name." добавил нового рецензента.", 'date' => DB::raw('current_timestamp')]);
+        return response()->json(compact("id"));
+    }
+
+    public function store(Request $request)
+    {
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'file' => 'mimes:docx'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'code' => 7,
+                'message' => 'Validation error',
+            ], 422);
+        }
+        $fileExt = $request->file->extension();
+        if ($request->uuid === "null") {
+            $uuid = (string)Str::uuid();
+            $docName = $uuid . "." . $fileExt;
+            DB::table("works")
+                ->where("studentID", Auth::user()->id)
+                ->update(['file' => $docName]);
+            $request->file->storeAs('public', $docName);
+            DB::table("notifications")
+                ->insert(['userID' => $request->leaderID, 'text' => "Судент " . Auth::user()->name . " обновил запиксу.", 'date' => DB::raw('current_timestamp')]);
+            return response()->json(compact("docName"));
+        } else {
+            $docName = $request->uuid;
+            $request->file->storeAs('public', $request->uuid);
+            DB::table("notifications")
+                ->insert(['userID' => $request->leaderID, 'text' => "Судент " . Auth::user()->name . " обновил запиксу.", 'date' => DB::raw('current_timestamp')]);
+            return response()->json(compact("docName"));
+        }
+    }
+
     public function studChangeThemeEn(Request $request)
     {
         $text = "Студент " . Auth::user()->name . " изменил тему на английском с \"" . $request->data['themeEn'] . "\" на \"" . $request->data['newThemeEn'] . "\".";
@@ -109,6 +190,20 @@ class StudentController extends Controller
         DB::table("works")
             ->where('studentID', Auth::user()->id)
             ->update(['themeEn' => $request->data['newThemeEn']]);
+    }
+
+    public function studEditRealPages(Request $request)
+    {
+        DB::table("works")
+            ->where('studentID', Auth::user()->id)
+            ->update(['realPages' => $request->data['realPages']]);
+    }
+
+    public function studEditGPages(Request $request)
+    {
+        DB::table("works")
+            ->where('studentID', Auth::user()->id)
+            ->update(['graphicPages' => $request->data['graphicPages']]);
     }
 
     public function studChangeDate(Request $request)

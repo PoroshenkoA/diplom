@@ -26,6 +26,10 @@ Route::middleware('auth:api')->get('/adminUserNotes/{name}', 'API\AdminControlle
 Route::middleware('auth:api')->get('/adminUser/{name}', 'API\AdminController@user');
 Route::middleware('auth:api')->get('/adminDateNotes/{date}', 'API\AdminController@dateNotes');
 Route::middleware('auth:api')->get('/adminMakeWorks', 'API\AdminController@makeWorks');
+Route::middleware('auth:api')->post('/createNewQues', 'API\AdminController@createNewQues');
+Route::middleware('auth:api')->post('/editRate', 'API\AdminController@editRate');
+Route::middleware('auth:api')->post('/editProt', 'API\AdminController@editProt');
+Route::middleware('auth:api')->post('/editRec', 'API\AdminController@editRec');
 
 
 Route::middleware('auth:api')->get('/work', 'API\StudentController@work');
@@ -33,9 +37,14 @@ Route::middleware('auth:api')->get('/getLeaders', 'API\StudentController@leaders
 Route::middleware('auth:api')->get('/requests', 'API\StudentController@requests');
 Route::middleware('auth:api')->post('/createRequest', 'API\StudentController@createRequest');
 Route::middleware('auth:api')->post('/studChangeThemeEn', 'API\StudentController@studChangeThemeEn');
+Route::middleware('auth:api')->post('/studEditRealPages', 'API\StudentController@studEditRealPages');
+Route::middleware('auth:api')->post('/studEditGPages', 'API\StudentController@studEditGPages');
 Route::middleware('auth:api')->post('/studChangeThemeUkr', 'API\StudentController@studChangeThemeUkr');
 Route::middleware('auth:api')->post('/studChangeDate', 'API\StudentController@studChangeDate');
 Route::middleware('auth:api')->get('/studGetAvDates', 'API\StudentController@getDates');
+Route::middleware('auth:api')->post('/studDelRev', 'API\StudentController@DelRev');
+Route::middleware('auth:api')->post('/studAddNewRev', 'API\StudentController@addRev');
+Route::middleware('auth:api')->post('/studSendFile', 'API\StudentController@store');
 
 
 Route::middleware('auth:api')->get('/getStudents', 'API\LeaderController@students');
@@ -43,7 +52,11 @@ Route::middleware('auth:api')->get('/getLeaderWorks', 'API\LeaderController@work
 Route::middleware('auth:api')->get('/getLeaderType', 'API\LeaderController@getType');
 Route::middleware('auth:api')->post('/leaderChangeThemeEn', 'API\LeaderController@leaderChangeThemeEn');
 Route::middleware('auth:api')->post('/leaderChangeThemeUkr', 'API\LeaderController@leaderChangeThemeUkr');
-
+Route::middleware('auth:api')->post('/leaderAddNewRev', 'API\LeaderController@addRev');
+Route::middleware('auth:api')->post('/leaderEditRealPages', 'API\LeaderController@EditRealPages');
+Route::middleware('auth:api')->post('/leaderDelRev', 'API\LeaderController@DelRev');
+Route::middleware('auth:api')->post('/leaderEditGPages', 'API\LeaderController@EditGPages');
+Route::middleware('auth:api')->post('/leaderSendFile', 'API\LeaderController@store');
 
 Route::middleware('auth:api')->get('/getExaminerWorks', 'API\ExaminerController@works');
 

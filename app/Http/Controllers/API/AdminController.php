@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -27,12 +29,24 @@ class AdminController extends Controller
 
     public function deleteWork(Request $request)
     {
+        DB::table("reviews")
+            ->where('id', $request->rev1)
+            ->delete();
+        DB::table("reviews")
+            ->where('id', $request->rev2)
+            ->delete();
+        DB::table("questions")
+            ->where('protID', $request->pID)
+            ->delete();
+        DB::table("protections")
+            ->where('id', $request->pID)
+            ->delete();
         DB::table("works")
             ->where('id', $request->data)
             ->delete();
         DB::table("notifications")
             ->insert(['userID' => $request->leaderID,
-            'text' => "Админ удалил работы студента " . $request->studNam . ".",
+            'text' => "Админ удалил работу студента " . $request->studNam . ".",
             'date' => DB::raw('current_timestamp')]);
         DB::table("notifications")
             ->insert(['userID' => $request->studID,
@@ -45,11 +59,22 @@ class AdminController extends Controller
         $user = DB::table("users as u")
             ->where("u.email", $name)
             ->first();
+        $group = DB::table("groups as g")
+            ->select("name", "departmentID")
+            ->where("id", $user->groupID)
+            ->first();
         $department = DB::table('departments as d')
             ->leftJoin("universities as u", "d.universityID", "u.id")
             ->select("d.name as depName", "u.name as unName")
-            ->where('d.id', $user->departmentID)
+            ->where('d.id', $group->departmentID)
             ->first();
+        $avEx = DB::table('users as u')
+            ->leftJoin("groups as g", "g.id", "u.groupID")
+            ->leftJoin("departments as d", "d.id", "g.departmentID")
+            ->select("u.name as exName", "u.id as exID")
+            ->where('d.id', $group->departmentID)
+            ->whereIn('u.userTypeID',[3,5])
+            ->get();
         $requests = DB::table("requests as r")
             ->leftJoin("users as u", "r.studentID", "=", "u.id")
             ->leftJoin("users as u2", "r.leaderID", "=", "u2.id")
@@ -59,13 +84,42 @@ class AdminController extends Controller
             ->get();
         $works = DB::table("works as w")
             ->leftJoin("users as u", "w.studentID", "=", "u.id")
+            ->leftJoin("groups as g", "u.groupID", "=", "g.id")
             ->leftJoin("users as u2", "w.leaderID", "=", "u2.id")
             ->leftJoin("dateDef as d", "w.dateID", "=", "d.id")
-            ->select("u.name as studName","w.id as id", "u2.name as leaderName", "w.themeEn", "w.themeUkr", "w.studentID as studID", "w.leaderID as leaderID", "d.date")
+            ->leftJoin("reviews as r1", "w.rev1", "=", "r1.id")
+            ->leftJoin("reviews as r2", "w.rev2", "=", "r2.id")
+            ->leftJoin("protections as p", "w.id", "=", "p.workID")
+            ->select("w.id as id", "u.name as studName","w.themeEn", "w.themeUkr", "u2.name as leaderName",
+                "w.studentID as studentID","w.leaderID as leaderID", "d.date","w.file", "w.realPages","w.graphicPages",
+                "w.rev1 as rev1", "r1.name as r1n", "r1.workplace as r1w", "r1.degree as r1d", "r1.post as r1p",
+                "w.rev2 as rev2", "r2.name as r2n", "r2.workplace as r2w", "r2.degree as r2d", "r2.post as r2p", "p.rate as rate",
+                "p.id as pID","p.protocol as prot", "p.recommendation as pRec", "g.name as gName")
             ->where("w.studentID", $user->id)
             ->orWhere('w.leaderID', $user->id)
-            ->get();
-        return response()->json(compact('user', 'requests', 'works', "department"));
+            ->get()
+            ->transform(function ($item) {
+                $item->toggle=false;
+                $item->addRev = false;
+                $item->newRN = '';
+                $item->newRP = '';
+                $item->newRW = '';
+                $item->newRD = '';
+                $item->addQuestion=false;
+                $item->newQuestion='';
+                $item->editTotal=false;
+                $item->editProt=false;
+                $item->newExID=0;
+                $item->newExRate=0;
+                $item->newTotalRate=0;
+                $item->questions=DB::table("questions as q")
+                    ->leftJoin("users as u", "q.examinerID", "=", "u.id")
+                    ->select("question","examinerRate", "u.name")
+                    ->where("protID", $item->pID)
+                    ->get();
+                return $item;
+            });
+        return response()->json(compact('user', 'group','requests', 'works', "department","avEx"));
     }
 
     public function dateNotes($date)
@@ -83,11 +137,43 @@ class AdminController extends Controller
         return response()->json(compact('notifications'));
     }
 
+    public function createNewQues(Request $request)
+    {
+        DB::table("questions")
+            ->insert(['protID' => $request->pid, 'examinerID' => $request->exID, 'question' => $request->ques,'examinerRate' => $request->rate]);
+        $ques=DB::table("questions as q")
+            ->leftJoin("users as u", "q.examinerID", "=", "u.id")
+            ->select("question","examinerRate", "u.name")
+            ->where("protID", $request->pid)
+            ->get();
+        return response()->json(compact('ques'));
+    }
+
+
     public function newUsername(Request $request)
     {
-        DB::table("users")
+        DB::table("protections")
             ->where('id', $request->id)
-            ->update(['name' => $request->data]);
+            ->update(['rate' => $request->data]);
+    }
+
+    public function editRate(Request $request)
+    {
+        DB::table("protections")
+            ->where('id', $request->id)
+            ->update(['rate' => $request->rate]);
+    }
+    public function editRec(Request $request)
+    {
+        DB::table("protections")
+            ->where('id', $request->id)
+            ->update(['recommendation' => $request->rec]);
+    }
+    public function editProt(Request $request)
+    {
+        DB::table("protections")
+            ->where('id', $request->id)
+            ->update(['protocol' => $request->prot]);
     }
 
     public function newEmail(Request $request)
@@ -124,6 +210,9 @@ class AdminController extends Controller
                 if($req->totalPriority === $prior && $req->visa === true && $leaderLoad<(int)$leaderMaxLoad->leaderLoad){
                     DB::table("works")
                         ->insert(['studentID' => $req->studentID, 'leaderID' => $req->leaderID]);
+                    $id = DB::table("works")->orderBy("id", "desc")->first();
+                    DB::table("protections")
+                        ->insert(['workID' => $id->id]);
                     DB::table("requests")
                         ->where('studentID', $req->studentID)
                         ->delete();
@@ -153,6 +242,9 @@ class AdminController extends Controller
                 if($req->totalPriority === $prior && $req->visa === false  && $leaderLoad<(int)$leaderMaxLoad->leaderLoad){
                     DB::table("works")
                         ->insert(['studentID' => $req->studentID, 'leaderID' => $req->leaderID]);
+                    $id = DB::table("works")->orderBy("id", "desc")->first();
+                    DB::table("protections")
+                        ->insert(['workID' => $id->id]);
                     DB::table("requests")
                         ->where('studentID', $req->studentID)
                         ->delete();

@@ -2,232 +2,441 @@
 
 @section('content')
 
-    <div class="container" id="notifications">
+    <div class="container" id="stud">
 
-        <div class="row justify-content-center">
-            <table border="0">
-                <tr>
-                    <div>
-                        <p v-if="requests.length != 0" align="center">Мои руководители</p>
-                        <table v-if="requests.length != 0" class="table table-sm">
-                            <thead>
-                            <tr>
-                                <th scope="col">Имя</th>
-                                <th scope="col">Приоритет</th>
-                                <th scope="col">Наличие визы</th>
-                                <th scope="col">Удалить</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="(item,key) in requests">
-                                <td>@{{item.name}}</td>
-                                <td><span v-show="!item.edit">@{{item.studentPriority}}</span>
-                                    <div style="display: inline-block;" v-show="!item.edit">
-                                        <div style="display: inline-block;margin-left: 10px;" @click="edit(item)"
-                                             class="btn-sm btn-primary"><i
-                                                    class="fa fa-pencil" aria-hidden="true"></i></div>
-                                    </div>
-                                    <div style="display: inline-block;" v-show="item.edit">
-                                        <div style="display: inline-block;">
-                                            <label class="radio-inline"><input type="radio" v-model="item.newPrior"
-                                                                               value="1" :disabled="chosen_priorities.indexOf(1)!==-1
-                                                                               || chosen_priorities2.indexOf('1')!==-1 "
-                                                                               :name="item.name">1</label>&nbsp;
-                                            <label class="radio-inline"><input type="radio" v-model="item.newPrior"
-                                                                               value="2" :disabled="chosen_priorities.indexOf(2)!==-1
-                                                                               || chosen_priorities2.indexOf('2')!==-1 "
-                                                                               :name="item.name">2</label>&nbsp;
-                                            <label class="radio-inline"><input type="radio" v-model="item.newPrior"
-                                                                               value="3" :disabled="chosen_priorities.indexOf(3)!==-1
-                                                                               || chosen_priorities2.indexOf('3')!==-1 "
-                                                                               :name="item.name">3</label>
+        <div v-if="typeof work[0] === 'undefined'" class="row justify-content-center">
+            <td v-if="work === false">
+                <table width="100%" border="0">
+                    <tr width="100%">
+                        <td width="100%">
+                            <p v-if="requests.length != 0" align="center">Мои руководители</p>
+                            <table v-if="requests.length != 0" class="table table-sm">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Имя</th>
+                                    <th scope="col">Приоритет</th>
+                                    <th scope="col">Наличие визы</th>
+                                    <th scope="col">Удалить</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(item,key) in requests">
+                                    <td>@{{item.name}}</td>
+                                    <td><span v-show="!item.edit">@{{item.studentPriority}}</span>
+                                        <div style="display: inline-block;" v-show="!item.edit">
+                                            <div style="display: inline-block;margin-left: 10px;" @click="edit(item)"
+                                                 class="btn-sm btn-primary"><i
+                                                        class="fa fa-pencil" aria-hidden="true"></i></div>
                                         </div>
-                                        <div style="display: inline-block;margin-left: 10px;" @click="editPrior(item)"
-                                             class="btn-sm btn-success"><i
-                                                    class="fa fa-check" aria-hidden="true"></i></div>
-                                        <div style="display: inline-block;margin-left: 10px;" @click="cancel(item)"
+                                        <div style="display: inline-block;" v-show="item.edit">
+                                            <div style="display: inline-block;">
+                                                <label class="radio-inline"><input type="radio" v-model="item.newPrior"
+                                                                                   value="1" :disabled="chosen_priorities.indexOf('1')!==-1
+                                                                               || chosen_priorities2.indexOf('1')!==-1 ||
+                                                                               chosen_priorities3.indexOf(1)!==-1 ||
+                                                                                chosen_priorities.indexOf(3)!==-1"
+                                                                                   :name="item.name">1</label>&nbsp;
+                                                <label class="radio-inline"><input type="radio" v-model="item.newPrior"
+                                                                                   value="2" :disabled="chosen_priorities.indexOf('2')!==-1
+                                                                               || chosen_priorities2.indexOf('2')!==-1 ||
+                                                                               chosen_priorities3.indexOf(2)!==-1 ||
+                                                                                chosen_priorities.indexOf(2)!==-1"
+                                                                                   :name="item.name">2</label>&nbsp;
+                                                <label class="radio-inline"><input type="radio" v-model="item.newPrior"
+                                                                                   value="3" :disabled="chosen_priorities.indexOf('3')!==-1
+                                                                               || chosen_priorities2.indexOf('3')!==-1 ||
+                                                                               chosen_priorities3.indexOf(3)!==-1 ||
+                                                                                chosen_priorities.indexOf(3)!==-1"
+                                                                                   :name="item.name">3</label>
+                                            </div>
+                                            <div style="display: inline-block;margin-left: 10px;"
+                                                 @click="editPrior(item)"
+                                                 class="btn-sm btn-success"><i
+                                                        class="fa fa-check" aria-hidden="true"></i></div>
+                                            <div style="display: inline-block;margin-left: 10px;" @click="cancel(item)"
+                                                 class="btn-sm btn-danger"><i
+                                                        class="fa fa-times" aria-hidden="true"></i></div>
+                                        </div>
+                                    </td>
+                                    <td><span v-if="item.visa"><i class="fa fa-check-circle" style="color: #38c172"
+                                                                  aria-hidden="true"></i></span><span v-else><i
+                                                    class="fa fa-times-circle" style="color: #e3342f;"
+                                                    aria-hidden="true"></i></span>
+                                    </td>
+                                    <td>
+                                        <div style="display: inline-block;" @click="del(item)"
                                              class="btn-sm btn-danger"><i
                                                     class="fa fa-times" aria-hidden="true"></i></div>
-                                    </div>
-                                </td>
-                                <td><span v-if="item.visa"><i class="fa fa-check-circle" style="color: #38c172"
-                                                              aria-hidden="true"></i></span><span v-else><i
-                                                class="fa fa-times-circle" style="color: #e3342f;"
-                                                aria-hidden="true"></i></span></td>
-                                <td>
-                                    <div style="display: inline-block;" @click="del(item)" class="btn-sm btn-danger"><i
-                                                class="fa fa-times" aria-hidden="true"></i></div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                    </div>
-                </tr>
-                <tr>
-                    <div>
-                        <p align="center">Возможные руководители</p>
-                        <div class="card" style="width: 90%;">
-                            <ul class="list-group list-group-flush">
-                                <li style="float:left" class="list-group-item" v-for="item1 in leaders"
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr width="100%">
+                        <td width="100%">
+                            <p align="center">Возможные руководители</p>
+                            <table width="100%">
+                                <tr v-for="item1 in leaders"
                                     v-if="item1.leaderLoad!==0 && item1.leaderLoad!==item1.leaderCurLoad">
-                                    <div style="clear:both; text-align:right;">
-                                        <div style="float:left;">@{{item1.name}}</div>
-                                        <div>
-                                            <label class="radio-inline"><input type="radio" v-model="item1.radio"
-                                                                               value="1" :disabled="chosen_priorities.indexOf(1)!==-1
-                                                                               || chosen_priorities2.indexOf('1')!==-1 "
-                                                                               :name="item1.name">1</label>&nbsp;
-                                            <label class="radio-inline"><input type="radio" v-model="item1.radio"
-                                                                               value="2" :disabled="chosen_priorities.indexOf(2)!==-1
-                                                                               || chosen_priorities2.indexOf('2')!==-1 "
-                                                                               :name="item1.name">2</label>&nbsp;
-                                            <label class="radio-inline"><input type="radio" v-model="item1.radio"
-                                                                               value="3" :disabled="chosen_priorities.indexOf(3)!==-1
-                                                                               || chosen_priorities2.indexOf('3')!==-1 "
-                                                                               :name="item1.name">3</label>&nbsp;
-                                            <label class="radio-inline" style="margin-right: 5%;"><input type="radio"
-                                                                                                         v-model="item1.radio"
-                                                                                                         value=""
-                                                                                                         :name="item1.name">Нет</label>
-                                        </div>
-                                    </div>
-                            </ul>
-                        </div>
-                        <div style="margin-top: 5px;" @click="send" class="btn btn-primary">Сохранить</div>
-                    </div>
-                </tr>
-            </table>
-            <div v-if="work !== false">
-                <p style="margin-top: 20px" align="center">Работа</p>
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col">Имя руководителя</th>
-                        <th scope="col">Тема на английском</th>
-                        <th scope="col">Тема на украинском</th>
-                        <th scope="col">Дата Защиты</th>
+                                    <td width="20%"></td>
+                                    <td width="50%">@{{item1.name}}</td>
+                                    <td>
+                                        <label class="radio-inline"><input type="radio" v-model="item1.radio"
+                                                                           value="1" :disabled="chosen_priorities.indexOf('1')!==-1
+                                                                               || chosen_priorities2.indexOf('1')!==-1 ||
+                                                                               chosen_priorities3.indexOf(1)!==-1 ||
+                                                                                chosen_priorities.indexOf(1)!==-1"
+                                                                           :name="item1.name">1</label>&nbsp;
+                                        <label class="radio-inline"><input type="radio" v-model="item1.radio"
+                                                                           value="2" :disabled="chosen_priorities.indexOf('2')!==-1
+                                                                               || chosen_priorities2.indexOf('2')!==-1 ||
+                                                                               chosen_priorities3.indexOf(2)!==-1 ||
+                                                                               chosen_priorities.indexOf(2)!==-1"
+                                                                           :name="item1.name">2</label>&nbsp;
+                                        <label class="radio-inline"><input type="radio" v-model="item1.radio"
+                                                                           value="3" :disabled="chosen_priorities.indexOf('3')!==-1
+                                                                               || chosen_priorities2.indexOf('3')!==-1 ||
+                                                                                chosen_priorities3.indexOf(3)!==-1 ||
+                                                                                chosen_priorities.indexOf(3)!==-1"
+                                                                           :name="item1.name">3</label>&nbsp;
+                                        <label class="radio-inline" style="margin-right: 5%;"><input
+                                                    type="radio"
+                                                    v-model="item1.radio"
+                                                    value=""
+                                                    :name="item1.name">Нет</label>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div style="margin-top: 5px;margin-left: 45%" @click="send" class="btn btn-primary">
+                                Сохранить
+                            </div>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>@{{work[0].leaderName}}</td>
-                        <td>
-                            <span v-show="!editThemeEn">@{{work[0].themeEn}}</span>
-                            <div style="display: inline-block;margin-right: 20px; float: right;">
-                                <div v-show="!editThemeEn" @click="editThemeEn=true"
-                                     class="btn-sm btn-primary" style="float: right; margin-right: 20px;"><i
-                                            class="fa fa-pencil" aria-hidden="false"></i>
-                                </div>
-                            </div>
-                            <div v-show="editThemeEn" class="input-group mb-3">
-                                <input v-model="work[0].newThemeEn" type="text" class="form-control" aria-label="Name"
-                                       aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button @click="editEn()" class="btn btn-outline-secondary" type="button"
-                                            id="button-addon2">ОК
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span v-show="!editThemeUkr">@{{work[0].themeUkr}}</span>
-                            <div style="display: inline-block;margin-right: 20px; float: right;">
-                                <div v-show="!editThemeUkr" @click="editThemeUkr=true"
-                                     class="btn-sm btn-primary" style="float: right; margin-right: 20px;"><i
-                                            class="fa fa-pencil" aria-hidden="false"></i>
-                                </div>
-                            </div>
-                            <div v-show="editThemeUkr" class="input-group mb-3">
-                                <input v-model="work[0].newThemeUkr" type="text" class="form-control" aria-label="Name"
-                                       aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button @click="editUkr()" class="btn btn-outline-secondary" type="button"
-                                            id="button-addon2">ОК
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <span v-show="!editDate">@{{work[0].date}}</span>
-                                <div style="display: inline-block;margin-right: 20px; float: right;">
-                                    <div v-show="!editDate" @click="showAvDates()"
-                                         class="btn-sm btn-primary" style="float: right; margin-right: 20px;"><i
-                                                class="fa fa-pencil" aria-hidden="false"></i>
-                                    </div>
-                                </div>
-                                <div style="display: inline-block;" v-if="editDate" class="input-group mb-3">
-                                    <select v-model="work[0].newDate" class="custom-select" id="inputGroupSelect01">
-                                        <option></option>
-                                        <option v-for="(item1,key) in avDates" :value="item1">@{{ item1 }}</option>
-                                    </select>
-
-                                    <button @click="editNewDate()" class="btn btn-primary" type="button">
-                                        ОК
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                    </tr>
-                    </tbody>
                 </table>
-            </div>
-            <div style="margin-top: 40px;" align="center">
-                Оповещения
-            </div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Дата</th>
-                    <th scope="col">Сообщение</th>
-                    <th scope="col">Удалить</th>
-                </tr>
-                </thead>
+        </div>
+        <div v-if="typeof work[0] !== 'undefined'">
+            <p style="margin-top: 20px" align="center">Работа</p>
+            <table class="table table-sm" border="0">
                 <tbody>
-                <tr v-for="item in text">
-                    <td>@{{item.date}}</td>
-                    <td>@{{item.text}}</td>
+                <tr>
+                    <td width="250px">Имя руководителя</td>
+                    <td colspan="2">@{{work[0].leaderName}}</td>
+                </tr>
+                <tr>
+                    <td>Тема на английском</td>
                     <td>
-                        <div style="display: inline-block;" @click="hideNote(item)"
-                             class="btn-sm btn-danger"><i
-                                    class="fa fa-times" aria-hidden="true"></i>
+                        <span v-show="!editThemeEn">@{{work[0].themeEn}}</span>
+                        <div v-show="editThemeEn" class="input-group mb-3">
+                            <input v-model="work[0].newThemeEn" type="text" class="form-control" aria-label="Name"
+                                   aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <button @click="editEn()" class="btn btn-outline-secondary" type="button"
+                                        id="button-addon2">ОК
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td width="10%">
+                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                            <div v-show="!editThemeEn" @click="editThemeEn=true"
+                                 class="btn-sm btn-primary"><i
+                                        class="fa fa-pencil" aria-hidden="false"></i>
+                            </div>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
-                        <div style="display: inline-block; float:right; width: 90px" @click="hideAllNotes()"
-                             class="btn-sm btn-danger">Удалить все
+                    <td>Тема на украинском</td>
+                    <td>
+                        <span v-show="!editThemeUkr">@{{work[0].themeUkr}}</span>
+                        <div v-show="editThemeUkr" class="input-group mb-3">
+                            <input v-model="work[0].newThemeUkr" type="text" class="form-control" aria-label="Name"
+                                   aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <button @click="editUkr()" class="btn btn-outline-secondary" type="button"
+                                        id="button-addon2">ОК
+                                </button>
+                            </div>
                         </div>
+                    </td>
+                    <td>
+                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                            <div v-show="!editThemeUkr" @click="editThemeUkr=true"
+                                 class="btn-sm btn-primary"><i
+                                        class="fa fa-pencil" aria-hidden="false"></i>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Дата защиты</td>
+                    <td>
+                        <span v-show="!editDate">@{{work[0].date}}</span>
+                        <div style="display: inline-block;" v-if="editDate" class="input-group mb-3">
+                            <select v-model="work[0].newDate" class="custom-select" id="inputGroupSelect01">
+                                <option></option>
+                                <option v-for="(item1,key) in avDates" :value="item1">@{{ item1 }}</option>
+                            </select>
+
+                            <button @click="editNewDate()" class="btn btn-primary" type="button">
+                                ОК
+                            </button>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                            <div v-show="!editDate" @click="showAvDates()"
+                                 class="btn-sm btn-primary"><i
+                                        class="fa fa-pencil" aria-hidden="false"></i>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Записка</td>
+                    <td>
+                        <div v-show="work[0].file !== null && !editFile">
+                            <a id="link" style="display: inline-block;" :href="'/download/'+work[0].file"><i
+                                        class="icon-download-alt"> </i>Скачать&nbsp;</a>
+                        </div>
+                        <div v-show="editFile" class="input-group">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <input type="file" style="display: none" id="inputGroupFile04"
+                                       @change="onFileChange">
+                                <label for="inputGroupFile04" class="btn btn-secondary">Выбрать</label>
+                                <label type="button" @click="sendFile" class="btn btn-secondary">ОК</label>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                            <div v-show="!editFile" @click="editFile=true"
+                                 class="btn-sm btn-primary"><i
+                                        class="fa fa-pencil" aria-hidden="false"></i>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Количество страниц в записке</td>
+                    <td>
+                        <span v-show="!editRealPages">@{{work[0].realPages}}</span>
+                        <div v-show="editRealPages" class="input-group mb-3">
+                            <input v-model="work[0].realPages" type="text" class="form-control" aria-label="Name"
+                                   aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <button @click="editRP()" class="btn btn-outline-secondary" type="button"
+                                        id="button-addon2">ОК
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                            <div v-show="!editRealPages" @click="editRealPages=true"
+                                 class="btn-sm btn-primary" s><i
+                                        class="fa fa-pencil" aria-hidden="false"></i>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Количество слайдов в презентации</td>
+                    <td>
+                        <span v-show="!editPresentationPages">@{{work[0].graphicPages}}</span>
+                        <div v-show="editPresentationPages" class="input-group mb-3">
+                            <input v-model="work[0].graphicPages" type="text" class="form-control" aria-label="Name"
+                                   aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <button @click="editGP()" class="btn btn-outline-secondary" type="button"
+                                        id="button-addon2">ОК
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                            <div v-show="!editPresentationPages" @click="editPresentationPages=true"
+                                 class="btn-sm btn-primary"><i
+                                        class="fa fa-pencil" aria-hidden="false"></i>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr v-if="work[0].r1n !== null">
+                    <td>Первый рецензент</td>
+                    <td>
+                        <span><strong>Имя: </strong>@{{ work[0].r1n }}</span>
+                        <p></p>
+                        <span><strong>Место работы: </strong>@{{ work[0].r1w }}</span>
+                        <p></p>
+                        <span><strong>Должность: </strong> @{{ work[0].r1p }}</span>
+                        <p></p>
+                        <span><strong>Научная степень: </strong> @{{ work[0].r1d }}</span>
+                    </td>
+                    <td>
+                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                            <div @click="delRev1()"
+                                 class="btn-sm btn-danger"><i
+                                        class="fa fa-times" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr v-if="work[0].r2n !== null">
+                    <td>Второй рецензент</td>
+                    <td>
+                        <span><strong>Имя: </strong>@{{ work[0].r2n }}</span>
+                        <p></p>
+                        <span><strong>Место работы: </strong>@{{ work[0].r2w }}</span>
+                        <p></p>
+                        <span><strong>Должность: </strong> @{{ work[0].r2p }}</span>
+                        <p></p>
+                        <span><strong>Научная степень: </strong> @{{ work[0].r2d }}</span>
+                    </td>
+                    <td>
+                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                            <div @click="delRev2()"
+                                 class="btn-sm btn-danger"><i
+                                        class="fa fa-times" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr v-if="work[0].questions[0]">
+                    <td>Вопросы</td>
+                    <td colspan="2">
+                        <table class="table table-sm" border="0">
+                            <tr>
+                                <th>Экзаменатор</th>
+                                <th>Вопрос</th>
+                                <th>Оценка</th>
+                            </tr>
+                            <tr v-for="ques in work[0].questions">
+                                <td><strong>@{{ ques.name}}</strong></td>
+                                <td>@{{ ques.question }}</td>
+                                <td><h3>@{{ ques.examinerRate }}</h3></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr v-if="work[0].prot !== null">
+                    <td>Протокол</td>
+                    <td>
+                        <h3 style="margin-left: 30%">@{{work[0].prot}}</h3>
+                    </td>
+                </tr>
+                <tr v-if="work[0].rate !== null">
+                    <td>Оценка</td>
+                    <td>
+                        <h3 style="margin-left: 30%">@{{work[0].rate}}</h3>
+                    </td>
+                </tr>
+                <tr v-if="work[0].rate !== null">
+                    <td>Оценка в национальной шкале</td>
+                    <td>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate<60">Незадовільно</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>=60 && work[0].rate<75">Задовільно</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>=75 && work[0].rate<90 ">Добре</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>90">Відмінно</h3>
+                    </td>
+                </tr>
+                <tr v-if="work[0].rate !== null">
+                    <td>Оценка в европейской шкале</td>
+                    <td>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate<60">F</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>=60 && work[0].rate<75">E</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>=75 && work[0].rate<90 ">C</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>90 && work[0].rate<96 ">B</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>96">A</h3>
                     </td>
                 </tr>
                 </tbody>
             </table>
+            <div>
+                    <span v-if="addRev===false && (work[0].rev1===null || work[0].rev2===null)" style="margin-top: 10px"
+                          class="btn btn-outline-secondary" @click="addRev=true">
+                        Добавить рецензента
+                    </span>
+                <div v-if="addRev===true">
+                    <input v-model="newRN" type="text" class="form-control" aria-label="Name"
+                           aria-describedby="button-addon2" placeholder="ФИО">
+                    <input v-model="newRW" type="text" class="form-control" aria-label="Name"
+                           aria-describedby="button-addon2" placeholder="Место работы">
+                    <input v-model="newRP" type="text" class="form-control" aria-label="Name"
+                           aria-describedby="button-addon2" placeholder="Должность">
+                    <input v-model="newRD" type="text" class="form-control" aria-label="Name"
+                           aria-describedby="button-addon2" placeholder="Научная степень">
+                    <button style="margin-top: 10px;" @click="addNewRev()"
+                            class="btn-sm btn-primary">Добавить
+                    </button>
+                </div>
+            </div>
         </div>
+        <div style="margin-top: 10%;" align="center">
+            Оповещения
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Дата</th>
+                <th scope="col">Сообщение</th>
+                <th scope="col">Удалить</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="item in text">
+                <td>@{{item.date}}</td>
+                <td>@{{item.text}}</td>
+                <td>
+                    <div style="display: inline-block;" @click="hideNote(item)"
+                         class="btn-sm btn-danger"><i
+                                class="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div style="display: inline-block; float:right; width: 90px" @click="hideAllNotes()"
+                         class="btn-sm btn-danger">Удалить все
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     </div>
 @endsection
 
 @push('scripts')
     <script>
         var vStud = new Vue({
-            el: '#notifications',
+            el: '#stud',
             data: {
                 leaders: [],
                 requests: [],
                 text: [],
-                work: null,
+                work: false,
+                file: null,
                 avDates: [],
                 editThemeEn: false,
                 editThemeUkr: false,
                 editDate: false,
+                editFile: false,
+                editRealPages: false,
+                editPresentationPages: false,
+                addRev: false,
+                newRN: '',
+                newRP: '',
+                newRD: '',
+                newRW: '',
             },
             computed: {
                 chosen_priorities: function () {
                     let arr = [];
                     _.forEach(this.requests, function (item) {
-                        arr.push(item.studentPriority);
+                        arr.push(item.newPrior);
                     });
                     return arr;
                 },
@@ -235,6 +444,13 @@
                     let arr = [];
                     _.forEach(this.leaders, function (item) {
                         arr.push(item.radio);
+                    });
+                    return arr;
+                },
+                chosen_priorities3: function () {
+                    let arr = [];
+                    _.forEach(this.requests, function (item) {
+                        arr.push(item.studentPriority);
                     });
                     return arr;
                 }
@@ -253,7 +469,7 @@
                     for (var i = nums.length - 1; i >= 0; i--) {
                         this.leaders.splice(nums[i], 1);
                     }
-                    if (arr.length != 0) {
+                    if (arr.length !== 0) {
                         let data = {data: arr};
                         this.$http.post('/api/createRequest', data).then(function () {
                             _this.$http.get('/api/requests')
@@ -289,11 +505,73 @@
                 cancel: function (item) {
                     item.edit = false;
                 },
+                addNewRev: function () {
+                    var _this = this;
+                    if (this.newRD === '' || this.newRW === '' || this.newRP === '' || this.newRN === '') {
+                        return alert("Заполните все поля");
+                        ;
+                    }
+                    if (this.work[0].rev1 && this.work[0].rev2) {
+                        return alert("Нет мест");
+                        ;
+                    }
+                    let data = {
+                        name: _this.newRN,
+                        wp: _this.newRW,
+                        d: _this.newRD,
+                        p: _this.newRP,
+                        leaderID: _this.work[0].leaderID
+                    };
+                    this.$http.post('/api/studAddNewRev', data).then(function (response) {
+                        if (_this.work[0].rev1) {
+                            _this.work[0].rev2 = response.data.id;
+                            _this.work[0].r2n = _this.newRN;
+                            _this.work[0].r2d = _this.newRD;
+                            _this.work[0].r2w = _this.newRW;
+                            _this.work[0].r2p = _this.newRP;
+                        } else {
+                            _this.work[0].rev1 = response.data.id;
+                            _this.work[0].r1n = _this.newRN;
+                            _this.work[0].r1d = _this.newRD;
+                            _this.work[0].r1w = _this.newRW;
+                            _this.work[0].r1p = _this.newRP;
+                        }
+                        _this.addRev = false;
+                    });
+                },
                 editPrior: function (item) {
-                    let data = {data: item.newPrior, id: item.id};
+                    let data = {data: item.newPrior, id: item.reqID};
                     this.$http.post('/api/editPrior', data);
                     item.studentPriority = item.newPrior;
-                    item.edit = false
+                    item.edit = false;
+                },
+                editRP: function () {
+                    let data = {data: this.work[0]}
+                    this.$http.post('/api/studEditRealPages', data)
+                    this.editRealPages = false;
+                },
+                delRev1: function () {
+                    let data = {id: this.work[0].rev1}
+                    this.$http.post('/api/studDelRev', data)
+                    this.work[0].rev1 = null;
+                    this.work[0].r1n = null;
+                    this.work[0].r1w = null;
+                    this.work[0].r1p = null;
+                    this.work[0].r1d = null;
+                },
+                delRev2: function () {
+                    let data = {id: this.work[0].rev2}
+                    this.$http.post('/api/studDelRev', data)
+                    this.work[0].rev2 = null;
+                    this.work[0].r2n = null;
+                    this.work[0].r2w = null;
+                    this.work[0].r2p = null;
+                    this.work[0].r2d = null;
+                },
+                editGP: function () {
+                    let data = {data: this.work[0]}
+                    this.$http.post('/api/studEditGPages', data)
+                    this.editPresentationPages = false;
                 },
                 editEn: function () {
                     var _this = this;
@@ -337,6 +615,7 @@
                         });
 
                 },
+
                 hideNote: function (item) {
                     if (item.userID !== 1) {
                         var _this = this;
@@ -349,6 +628,33 @@
                         });
                     } else alert("Нельзя удалить сообщение администратора");
                 },
+
+                onFileChange(e) {
+                    var files = e.target.files || e.dataTransfer.files;
+                    if (!files.length)
+                        return;
+                    this.file = files[0];
+                },
+
+                sendFile: function () {
+                    if (this.file !== null) {
+                        var _this = this;
+                        var formData = new FormData();
+                        formData.append('file', _this.file);
+                        formData.append('uuid', _this.work[0].file);
+                        formData.append('leaderID', _this.work[0].leaderID);
+                        _this.$http.post('/api/studSendFile', formData)
+                            .then(function (response) {
+                                _this.editFile = false;
+                                this.work[0].file = response.data.docName;
+                            }).catch(function (respond) {
+                            _this.editFile = false;
+                            alert("Неверный тип файла. Нужен docx")
+                        });
+                    }
+                    this.editFile = false;
+                },
+
                 hideAllNotes: function () {
                     var _this = this;
                     this.$http.get('/api/hideAllNotes').then(function (response) {

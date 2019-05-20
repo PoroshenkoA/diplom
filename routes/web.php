@@ -18,11 +18,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/download/{uuid}', 'HomeController@download');
 
 
 Route::prefix('student')->group(function() {
     Route::get('/home', 'HomeController@index')->name('student.home');
-    Route::get('/leaders', 'StudentController@studLeaders')->name('student.leaders');
 });
 
 Route::prefix('leader')->group(function() {
