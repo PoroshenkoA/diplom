@@ -25,103 +25,120 @@
                     <table class="table table-sm" border="0">
                         <tbody>
                         <tr>
-                            <td width="200px">Имя руководителя</td>
+                            <td width="200px">ПІБ керівника</td>
                             <td>
                                 <span >@{{item.leaderName}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td width="200px">Тема на английском</td>
+                            <td width="200px">Тема англійською</td>
                             <td>
                                 <span >@{{item.themeEn}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td>Тема на украинском</td>
+                            <td>Тема українською</td>
                             <td>
                                 <span >@{{item.themeUkr}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td>Дата защиты</td>
+                            <td>Дата захисту</td>
                             <td>
                                 <span>@{{item.date}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td>Записка</td>
+                            <td>Напрацювання</td>
                             <td>
                                 <div v-show="item.file !== null && !item.editFile">
-                                    <a id="link" style="display: inline-block;" :href="'/download/'+item.file"><i
-                                                class="icon-download-alt"> </i>Скачать&nbsp;</a>
+                                    <a id="link" style="display: inline-block;" :href="'/download/'+item.file+'/name/'+item.studName"><i
+                                                class="icon-download-alt"> </i>Завантажити&nbsp;</a>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td>Количество страниц в записке</td>
+                            <td>Кількість сторінок</td>
                             <td>
                                 <span>@{{item.realPages}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td>Количество слайдов в презентации</td>
+                            <td>Кількість слайдів</td>
                             <td>
                                 <span>@{{item.graphicPages}}</span>
                             </td>
                         </tr>
                         <tr v-if="item.r1n !== null">
-                            <td>Первый рецензент</td>
+                            <td>Перший рецензент</td>
                             <td>
-                                <span><strong>Имя: </strong>@{{ item.r1n }}</span>
+                                <span><strong>ПІБ: </strong>@{{ item.r1n }}</span>
                                 <p></p>
-                                <span><strong>Место работы: </strong>@{{ item.r1w }}</span>
+                                <span><strong>Місце роботи: </strong>@{{ item.r1w }}</span>
                                 <p></p>
-                                <span><strong>Должность: </strong> @{{ item.r1p }}</span>
+                                <span><strong>Посада: </strong> @{{ item.r1p }}</span>
                                 <p></p>
-                                <span><strong>Научная степень: </strong> @{{ item.r1d }}</span>
+                                <span><strong>Науковий ступ: </strong> @{{ item.r1d }}</span>
                             </td>
                         </tr>
                         <tr v-if="item.r2n !== null">
-                            <td>Второй рецензент</td>
+                            <td>Другий рецензент</td>
                             <td>
-                                <span><strong>Имя: </strong>@{{ item.r2n }}</span>
+                                <span><strong>ПІБ: </strong>@{{ item.r2n }}</span>
                                 <p></p>
-                                <span><strong>Место работы: </strong>@{{ item.r2w }}</span>
+                                <span><strong>Місце роботи: </strong>@{{ item.r2w }}</span>
                                 <p></p>
-                                <span><strong>Должность: </strong> @{{ item.r2p }}</span>
+                                <span><strong>Посада: </strong> @{{ item.r2p }}</span>
                                 <p></p>
-                                <span><strong>Научная степень: </strong> @{{ item.r2d }}</span>
+                                <span><strong>Науковий ступ: </strong> @{{ item.r2d }}</span>
+                            </td>
+                        </tr>
+                        <tr v-if="item.questions[0]">
+                            <td>Оцінки членів ЕК</td>
+                            <td colspan="2">
+                                <table class="table table-sm" border="0">
+                                    <tr>
+                                        <th>Екзаменатор</th>
+                                        <th>Пітання</th>
+                                        <th>Оцінка</th>
+                                    </tr>
+                                    <tr v-for="ques in item.questions">
+                                        <td><strong>@{{ ques.name}}</strong></td>
+                                        <td>@{{ ques.question }}</td>
+                                        <td><h3>@{{ ques.examinerRate }}</h3></td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr v-if="item.prot !== null">
-                            <td>Протокол</td>
+                            <td>Номер протоколу</td>
                             <td>
                                 <h3 style="margin-left: 30%">@{{item.prot}}</h3>
                             </td>
                         </tr>
                         <tr v-if="item.rate !== null">
-                            <td>Оценка</td>
+                            <td>Ітоговий бал</td>
                             <td>
                                 <h3 style="margin-left: 30%">@{{item.rate}}</h3>
                             </td>
                         </tr>
                         <tr v-if="item.rate !== null">
-                            <td>Оценка в национальной шкале</td>
+                            <td>У національній шкалі</td>
                             <td>
                                 <h3 style="margin-left: 30%" v-if="item.rate<60">Незадовільно</h3>
                                 <h3 style="margin-left: 30%" v-if="item.rate>=60 && item.rate<75">Задовільно</h3>
                                 <h3 style="margin-left: 30%" v-if="item.rate>=75 && item.rate<90 ">Добре</h3>
-                                <h3 style="margin-left: 30%" v-if="item.rate>90">Відмінно</h3>
+                                <h3 style="margin-left: 30%" v-if="item.rate>=90">Відмінно</h3>
                             </td>
                         </tr>
                         <tr v-if="item.rate !== null">
-                            <td>Оценка в европейской шкале</td>
+                            <td>У європейскій шкалі</td>
                             <td>
                                 <h3 style="margin-left: 30%" v-if="item.rate<60">F</h3>
                                 <h3 style="margin-left: 30%" v-if="item.rate>=60 && item.rate<75">E</h3>
                                 <h3 style="margin-left: 30%" v-if="item.rate>=75 && item.rate<90 ">C</h3>
-                                <h3 style="margin-left: 30%" v-if="item.rate>90 && item.rate<96 ">B</h3>
-                                <h3 style="margin-left: 30%" v-if="item.rate>96">A</h3>
+                                <h3 style="margin-left: 30%" v-if="item.rate>=90 && item.rate<96 ">B</h3>
+                                <h3 style="margin-left: 30%" v-if="item.rate>=96">A</h3>
                             </td>
                         </tr>
                         </tbody>
@@ -130,7 +147,7 @@
             </div>
         </div>
         <div v-else>
-            <span>Работ пока нет</span>
+            <span>Робіт пока що немає.</span>
         </div>
     </div>
 @endsection

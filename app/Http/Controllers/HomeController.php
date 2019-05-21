@@ -35,13 +35,13 @@ class HomeController extends Controller
             return view('admin\home');
     }
 
-    public function download($uuid)
+    public function download($uuid, $name)
     {
         $headers = [
             'Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'Content-Disposition: attachment;filename="' . $uuid . '"',
         ];
-        return response()->download(storage_path('app/public/' . $uuid), $uuid, $headers);
+        return response()->download(storage_path('app/public/' . $uuid), $name.".docx", $headers);
 
     }
     

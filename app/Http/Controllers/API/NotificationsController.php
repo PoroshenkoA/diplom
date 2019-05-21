@@ -29,7 +29,7 @@ class NotificationsController extends Controller
 
     public function makeNot(Request $request)
     {
-        $text = "Студент " . Auth::user()->name . " просит отменить визу у руководителя " . $request->data['name'] . ".";
+        $text = "Студент " . Auth::user()->name . " просить скасувати визу у керівника " . $request->data['name'] . ".";
         DB::table("notifications")
             ->insert(['userID' => $request->data['leaderID'], 'text' => $text, 'date' => DB::raw('current_timestamp')]);
 
@@ -37,7 +37,7 @@ class NotificationsController extends Controller
 
     public function makeAdminNote(Request $request)
     {
-        $text = "Админ говорит ";
+        $text = "Адмін повідомляє, що ";
         DB::table("notifications")
             ->insert(['userID' => "1", 'text' => $text . $request->text, 'date' => DB::raw('current_timestamp')]);
 
@@ -46,10 +46,10 @@ class NotificationsController extends Controller
     public function makeExaminerNote(Request $request)
     {
         DB::table("notifications")
-            ->insert(['userID' => $request->data['studentID'], 'text' => "Руководитель " . Auth::user()->name ." пишет: ". $request->data['newNote'], 'date' => DB::raw('current_timestamp')]);
+            ->insert(['userID' => $request->data['studentID'], 'text' => "Член ЕК " . Auth::user()->name ." пише: ". $request->data['newNote'], 'date' => DB::raw('current_timestamp')]);
         if(Auth::user()->id!=$request->data['leaderID'])
         DB::table("notifications")
-            ->insert(['userID' => $request->data['leaderID'], 'text' =>  "Руководитель ". Auth::user()->name ." пишет о работе студента ".$request->data['studName'].": \"".$request->data['newNote']."\"", 'date' => DB::raw('current_timestamp')]);
+            ->insert(['userID' => $request->data['leaderID'], 'text' =>  "Член ЕК ". Auth::user()->name ." пише о роботі студента ".$request->data['studName'].": \"".$request->data['newNote']."\"", 'date' => DB::raw('current_timestamp')]);
     }
 
     public function hideNote(Request $request)

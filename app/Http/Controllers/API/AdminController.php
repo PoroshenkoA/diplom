@@ -29,6 +29,9 @@ class AdminController extends Controller
 
     public function deleteWork(Request $request)
     {
+        DB::table("works")
+            ->where('id', $request->data)
+            ->update(["rev1"=>null, "rev2"=>null]);
         DB::table("reviews")
             ->where('id', $request->rev1)
             ->delete();
@@ -36,21 +39,21 @@ class AdminController extends Controller
             ->where('id', $request->rev2)
             ->delete();
         DB::table("questions")
-            ->where('protID', $request->pID)
+            ->where('protID', $request->pid)
             ->delete();
         DB::table("protections")
-            ->where('id', $request->pID)
+            ->where('id', $request->pid)
             ->delete();
         DB::table("works")
             ->where('id', $request->data)
             ->delete();
         DB::table("notifications")
             ->insert(['userID' => $request->leaderID,
-            'text' => "Админ удалил работу студента " . $request->studNam . ".",
+            'text' => "Адмін видалил роботу студента " . $request->studName . ".",
             'date' => DB::raw('current_timestamp')]);
         DB::table("notifications")
             ->insert(['userID' => $request->studID,
-            'text' => "Админ удалил вашу работу.",
+            'text' => "Адмін видалил вашу роботу.",
             'date' => DB::raw('current_timestamp')]);
     }
 
@@ -60,7 +63,7 @@ class AdminController extends Controller
             ->where("u.email", $name)
             ->first();
         $group = DB::table("groups as g")
-            ->select("name", "departmentID")
+            ->select("name", "departmentID" ,"status")
             ->where("id", $user->groupID)
             ->first();
         $department = DB::table('departments as d')
@@ -90,7 +93,7 @@ class AdminController extends Controller
             ->leftJoin("reviews as r1", "w.rev1", "=", "r1.id")
             ->leftJoin("reviews as r2", "w.rev2", "=", "r2.id")
             ->leftJoin("protections as p", "w.id", "=", "p.workID")
-            ->select("w.id as id", "u.name as studName","w.themeEn", "w.themeUkr", "u2.name as leaderName",
+            ->select("w.id as id", "u.id as studID", "u.name as studName","w.themeEn", "w.themeUkr", "u2.name as leaderName",
                 "w.studentID as studentID","w.leaderID as leaderID", "d.date","w.file", "w.realPages","w.graphicPages",
                 "w.rev1 as rev1", "r1.name as r1n", "r1.workplace as r1w", "r1.degree as r1d", "r1.post as r1p",
                 "w.rev2 as rev2", "r2.name as r2n", "r2.workplace as r2w", "r2.degree as r2d", "r2.post as r2p", "p.rate as rate",
@@ -100,12 +103,14 @@ class AdminController extends Controller
             ->get()
             ->transform(function ($item) {
                 $item->toggle=false;
+                $item->newDate = $item->date;
                 $item->addRev = false;
                 $item->newRN = '';
                 $item->newRP = '';
                 $item->newRW = '';
                 $item->newRD = '';
                 $item->addQuestion=false;
+                $item->editDate=false;
                 $item->newQuestion='';
                 $item->editTotal=false;
                 $item->editProt=false;
@@ -114,12 +119,35 @@ class AdminController extends Controller
                 $item->newTotalRate=0;
                 $item->questions=DB::table("questions as q")
                     ->leftJoin("users as u", "q.examinerID", "=", "u.id")
-                    ->select("question","examinerRate", "u.name")
+                    ->select("q.id","question","examinerRate", "u.name")
                     ->where("protID", $item->pID)
                     ->get();
                 return $item;
             });
         return response()->json(compact('user', 'group','requests', 'works', "department","avEx"));
+    }
+
+    public function editDate(Request $request)
+    {
+        $date = DB::table("dateDef")
+            ->select("id", "load")
+            ->where("date", $request->data['newDate'])
+            ->first();
+        if ($date) {
+            $dateLoad = DB::table("works")
+                ->where("dateID", $date->id)
+                ->get()
+                ->count();
+            if ($date->load > $dateLoad) {
+                DB::table("works")
+                    ->where('studentID',$request->data['studID'])
+                    ->update(['dateID' => $date->id]);
+            }
+        } else {
+            DB::table("works")
+                ->where('studentID', $request->data['studID'])
+                ->update(['dateID' => null]);
+        }
     }
 
     public function dateNotes($date)
@@ -163,11 +191,19 @@ class AdminController extends Controller
             ->where('id', $request->id)
             ->update(['rate' => $request->rate]);
     }
+
     public function editRec(Request $request)
     {
         DB::table("protections")
             ->where('id', $request->id)
             ->update(['recommendation' => $request->rec]);
+    }
+
+    public function delQues(Request $request)
+    {
+        DB::table("questions")
+            ->where('id', $request->id)
+            ->delete();
     }
     public function editProt(Request $request)
     {
@@ -185,18 +221,18 @@ class AdminController extends Controller
 
     public function makeWorks(Request $request)
     {
-        $text="Админ запустил распределение заявок.";
+        $text="Адмін розпочав розподіл запитів.";
         DB::table("notifications")
             ->insert(['userID' =>"1", 'text' => $text, 'date' => DB::raw('current_timestamp')]);
+        $priorities = [2,3,4,5,6];
         $requests = DB::table("requests")
             ->distinct()
             ->orderBy("id", "ASC")
             ->get()
             ->transform(function($item) {
-                $item->totalPriority = (int)($item->studentPriority) * 2 + (int)($item->leaderPriority);
+                $item->totalPriority = (int)($item->studentPriority) + (int)($item->leaderPriority);
                 return $item;
             });
-        $priorities = [2,3,4,5,6];
         foreach ($priorities as $prior) {
             foreach($requests as $req){
                 $leaderLoad=DB::table("works")
@@ -220,7 +256,7 @@ class AdminController extends Controller
                         ->distinct()
                         ->get()
                         ->transform(function($item) {
-                            $item->totalPriority = (int)($item->studentPriority) * 2 + (int)($item->leaderPriority);
+                            $item->totalPriority = (int)($item->studentPriority) + (int)($item->leaderPriority);
                             return $item;
                         });
                 }

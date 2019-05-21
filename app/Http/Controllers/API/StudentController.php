@@ -19,7 +19,7 @@ class StudentController extends Controller
             ->leftJoin("reviews as r1", "w.rev1", "=", "r1.id")
             ->leftJoin("reviews as r2", "w.rev2", "=", "r2.id")
             ->leftJoin("protections as p", "w.id", "=", "p.workID")
-            ->select("u2.id as leaderID", "u2.name as leaderName", "w.themeEn", "w.id as id",
+            ->select("u.name as studName","u2.id as leaderID", "u2.name as leaderName", "w.themeEn", "w.id as id",
                 "w.themeUkr", "d.date as date", "w.file", "w.realPages","graphicPages",
                 "w.rev1 as rev1", "r1.name as r1n", "r1.workplace as r1w", "r1.degree as r1d", "r1.post as r1p",
                 "w.rev2 as rev2", "r2.name as r2n", "r2.workplace as r2w", "r2.degree as r2d", "r2.post as r2p", "p.id as pID", "p.rate", "p.protocol as prot")
@@ -146,7 +146,7 @@ class StudentController extends Controller
                 ->update(['rev2' => $id]);
         }
         DB::table("notifications")
-            ->insert(['userID' => $request->leaderID, 'text' => "Судент ".Auth::user()->name." добавил нового рецензента.", 'date' => DB::raw('current_timestamp')]);
+            ->insert(['userID' => $request->leaderID, 'text' => "Студент ".Auth::user()->name." додал нового рецезента.", 'date' => DB::raw('current_timestamp')]);
         return response()->json(compact("id"));
     }
 
@@ -171,20 +171,20 @@ class StudentController extends Controller
                 ->update(['file' => $docName]);
             $request->file->storeAs('public', $docName);
             DB::table("notifications")
-                ->insert(['userID' => $request->leaderID, 'text' => "Судент " . Auth::user()->name . " обновил запиксу.", 'date' => DB::raw('current_timestamp')]);
+                ->insert(['userID' => $request->leaderID, 'text' => "Студент " . Auth::user()->name . " відновил свої напрацювання.", 'date' => DB::raw('current_timestamp')]);
             return response()->json(compact("docName"));
         } else {
             $docName = $request->uuid;
             $request->file->storeAs('public', $request->uuid);
             DB::table("notifications")
-                ->insert(['userID' => $request->leaderID, 'text' => "Судент " . Auth::user()->name . " обновил запиксу.", 'date' => DB::raw('current_timestamp')]);
+                ->insert(['userID' => $request->leaderID, 'text' => "Студент " . Auth::user()->name . " відновил свої напрацювання.", 'date' => DB::raw('current_timestamp')]);
             return response()->json(compact("docName"));
         }
     }
 
     public function studChangeThemeEn(Request $request)
     {
-        $text = "Студент " . Auth::user()->name . " изменил тему на английском с \"" . $request->data['themeEn'] . "\" на \"" . $request->data['newThemeEn'] . "\".";
+        $text = "Студент " . Auth::user()->name . " змінив тему англійською з \"" . $request->data['themeEn'] . "\" на \"" . $request->data['newThemeEn'] . "\".";
         DB::table("notifications")
             ->insert(['userID' => $request->data['leaderID'], 'text' => $text, 'date' => DB::raw('current_timestamp')]);
         DB::table("works")
@@ -218,7 +218,7 @@ class StudentController extends Controller
                 ->get()
                 ->count();
             if ($date->load > $dateLoad) {
-                $text = "Студент " . Auth::user()->name . " изменил дату своей защиты с \"" . $request->data['date'] . "\" на \"" . $request->data['newDate'] . "\".";
+                $text = "Студент " . Auth::user()->name . " змінив дату свого захисту з \"" . $request->data['date'] . "\" на \"" . $request->data['newDate'] . "\".";
                 DB::table("notifications")
                     ->insert(['userID' => $request->data['leaderID'], 'text' => $text, 'date' => DB::raw('current_timestamp')]);
                 DB::table("works")
@@ -226,7 +226,7 @@ class StudentController extends Controller
                     ->update(['dateID' => $date->id]);
             }
         } else {
-            $text = "Студент " . Auth::user()->name . " удалил дату своей защиты.";
+            $text = "Студент " . Auth::user()->name . " видалил дату свого захисту.";
             DB::table("notifications")
                 ->insert(['userID' => $request->data['leaderID'], 'text' => $text, 'date' => DB::raw('current_timestamp')]);
             DB::table("works")
@@ -238,7 +238,7 @@ class StudentController extends Controller
 
     public function studChangeThemeUkr(Request $request)
     {
-        $text = "Студент " . Auth::user()->name . " изменил тему на украинском с \"" . $request->data['themeUkr'] . "\" на \"" . $request->data['newThemeUkr'] . "\".";
+        $text = "Студент " . Auth::user()->name . " змінив тему українською з \"" . $request->data['themeUkr'] . "\" на \"" . $request->data['newThemeUkr'] . "\".";
         DB::table("notifications")
             ->insert(['userID' => $request->data['leaderID'], 'text' => $text, 'date' => DB::raw('current_timestamp')]);
         DB::table("works")

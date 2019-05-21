@@ -47,7 +47,7 @@ class LeaderController extends Controller
         }
         if (Auth::user()->userTypeID !== 4)
             DB::table("notifications")
-                ->insert(['userID' => $request->studentID, 'text' => "Руководитель " . Auth::user()->name . " добавил нового рецензента.", 'date' => DB::raw('current_timestamp')]);
+                ->insert(['userID' => $request->studentID, 'text' => "Керівник " . Auth::user()->name . " додал нового рецензента.", 'date' => DB::raw('current_timestamp')]);
         return response()->json(compact("id"));
     }
 
@@ -99,17 +99,17 @@ class LeaderController extends Controller
             $uuid = (string)Str::uuid();
             $docName = $uuid . "." . $fileExt;
             DB::table("works")
-                ->where("studentID", Auth::user()->id)
+                ->where("studentID", $request->studentID)
                 ->update(['file' => $docName]);
             $request->file->storeAs('public', $docName);
             DB::table("notifications")
-                ->insert(['userID' => $request->studentID, 'text' => "Руководитель " . Auth::user()->name . " обновил запиксу.", 'date' => DB::raw('current_timestamp')]);
+                ->insert(['userID' => $request->studentID, 'text' => "Керівник " . Auth::user()->name . " відновил ваші напрацювання.", 'date' => DB::raw('current_timestamp')]);
             return response()->json(compact("docName"));
         } else {
             $docName = $request->uuid;
             $request->file->storeAs('public', $request->uuid);
             DB::table("notifications")
-                ->insert(['userID' => $request->studentID, 'text' => "Руководитель " . Auth::user()->name . " обновил запиксу.", 'date' => DB::raw('current_timestamp')]);
+                ->insert(['userID' => $request->studentID, 'text' => "Керівник " . Auth::user()->name . " відновил ваші напрацювання.", 'date' => DB::raw('current_timestamp')]);
             return response()->json(compact("docName"));
         }
     }
@@ -170,7 +170,7 @@ class LeaderController extends Controller
         foreach ($request->data as $item) {
             if ($item['visa'] !== $item['editVisa']) {
                 if ($item['editVisa'] === 'true') {
-                    $text = "Руководитель " . Auth::user()->name . " одобрил запрос студента по имени " . $item['name'] . ".";
+                    $text = "Керівник " . Auth::user()->name . " схвалив запит студента " . $item['name'] . ".";
                     $leaderLoad = DB::table("works")
                         ->where("leaderID", Auth::user()->id)
                         ->get()
@@ -195,7 +195,7 @@ class LeaderController extends Controller
                                 ->delete();
                     }
                 } else {
-                    $text = "Руководитель " . Auth::user()->name . " убрал визу у запроса студента по имени " . $item['name'] . ".";
+                    $text = "Керівник " . Auth::user()->name . " скасувал візу у запроса студента " . $item['name'] . ".";
                 }
                 DB::table("notifications")
                     ->insert(['userID' => $item['studentID'], 'text' => $text, 'date' => DB::raw('current_timestamp')]);
@@ -209,7 +209,7 @@ class LeaderController extends Controller
     public
     function leaderChangeThemeEn(Request $request)
     {
-        $text = "Руководитель " . Auth::user()->name . " изменил тему на английском с \"" . $request->data['themeEn'] . "\" на \"" . $request->data['newThemeEn'] . "\".";
+        $text = "Керівник " . Auth::user()->name . " змінив тему англійською з \"" . $request->data['themeEn'] . "\" на \"" . $request->data['newThemeEn'] . "\".";
         DB::table("notifications")
             ->insert(['userID' => $request->data['studentID'], 'text' => $text, 'date' => DB::raw('current_timestamp')]);
         DB::table("works")
@@ -220,7 +220,7 @@ class LeaderController extends Controller
     public
     function leaderChangeThemeUkr(Request $request)
     {
-        $text = "Руководитель " . Auth::user()->name . " изменил тему на украинском с \"" . $request->data['themeUkr'] . "\" на \"" . $request->data['newThemeUkr'] . "\".";
+        $text = "Керівник " . Auth::user()->name . " змінив тему українською з \"" . $request->data['themeUkr'] . "\" на \"" . $request->data['newThemeUkr'] . "\".";
         DB::table("notifications")
             ->insert(['userID' => $request->data['studentID'], 'text' => $text, 'date' => DB::raw('current_timestamp')]);
         DB::table("works")

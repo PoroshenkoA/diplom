@@ -9,14 +9,14 @@
                 <table width="100%" border="0">
                     <tr width="100%">
                         <td width="100%">
-                            <p v-if="requests.length != 0" align="center">Мои руководители</p>
+                            <p v-if="requests.length != 0" align="center">Мої керівники</p>
                             <table v-if="requests.length != 0" class="table table-sm">
                                 <thead>
                                 <tr>
-                                    <th scope="col">Имя</th>
-                                    <th scope="col">Приоритет</th>
-                                    <th scope="col">Наличие визы</th>
-                                    <th scope="col">Удалить</th>
+                                    <th scope="col">ПІБ</th>
+                                    <th scope="col">Пріорітет</th>
+                                    <th scope="col">Наявність візи</th>
+                                    <th scope="col">Видалити</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -75,7 +75,7 @@
                     </tr>
                     <tr width="100%">
                         <td width="100%">
-                            <p align="center">Возможные руководители</p>
+                            <p align="center">Можливі керівники</p>
                             <table width="100%">
                                 <tr v-for="item1 in leaders"
                                     v-if="item1.leaderLoad!==0 && item1.leaderLoad!==item1.leaderCurLoad">
@@ -104,27 +104,27 @@
                                                     type="radio"
                                                     v-model="item1.radio"
                                                     value=""
-                                                    :name="item1.name">Нет</label>
+                                                    :name="item1.name">Ні</label>
                                     </td>
                                 </tr>
                             </table>
                             <div style="margin-top: 5px;margin-left: 45%" @click="send" class="btn btn-primary">
-                                Сохранить
+                                Зберегти
                             </div>
                         </td>
                     </tr>
                 </table>
         </div>
         <div v-if="typeof work[0] !== 'undefined'">
-            <p style="margin-top: 20px" align="center">Работа</p>
+            <p style="margin-top: 20px" align="center">Робота</p>
             <table class="table table-sm" border="0">
                 <tbody>
                 <tr>
-                    <td width="250px">Имя руководителя</td>
+                    <td width="250px">ПІБ керівника</td>
                     <td colspan="2">@{{work[0].leaderName}}</td>
                 </tr>
                 <tr>
-                    <td>Тема на английском</td>
+                    <td>Тема англійською</td>
                     <td>
                         <span v-show="!editThemeEn">@{{work[0].themeEn}}</span>
                         <div v-show="editThemeEn" class="input-group mb-3">
@@ -147,7 +147,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Тема на украинском</td>
+                    <td>Тема українською</td>
                     <td>
                         <span v-show="!editThemeUkr">@{{work[0].themeUkr}}</span>
                         <div v-show="editThemeUkr" class="input-group mb-3">
@@ -170,7 +170,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Дата защиты</td>
+                    <td>Дата захисту</td>
                     <td>
                         <span v-show="!editDate">@{{work[0].date}}</span>
                         <div style="display: inline-block;" v-if="editDate" class="input-group mb-3">
@@ -194,17 +194,18 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Записка</td>
+                    <td>Напрацювання</td>
                     <td>
                         <div v-show="work[0].file !== null && !editFile">
-                            <a id="link" style="display: inline-block;" :href="'/download/'+work[0].file"><i
-                                        class="icon-download-alt"> </i>Скачать&nbsp;</a>
+                            <a id="link" style="display: inline-block;"
+                               :href="'/download/'+work[0].file+'/name/'+work[0].studName"><i
+                                        class="icon-download-alt"> </i>Завантажити&nbsp;</a>
                         </div>
                         <div v-show="editFile" class="input-group">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <input type="file" style="display: none" id="inputGroupFile04"
                                        @change="onFileChange">
-                                <label for="inputGroupFile04" class="btn btn-secondary">Выбрать</label>
+                                <label for="inputGroupFile04" class="btn btn-secondary">Обрати</label>
                                 <label type="button" @click="sendFile" class="btn btn-secondary">ОК</label>
                             </div>
                         </div>
@@ -219,7 +220,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Количество страниц в записке</td>
+                    <td>Кількість сторінок</td>
                     <td>
                         <span v-show="!editRealPages">@{{work[0].realPages}}</span>
                         <div v-show="editRealPages" class="input-group mb-3">
@@ -242,7 +243,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Количество слайдов в презентации</td>
+                    <td>Кількість слайдів</td>
                     <td>
                         <span v-show="!editPresentationPages">@{{work[0].graphicPages}}</span>
                         <div v-show="editPresentationPages" class="input-group mb-3">
@@ -265,15 +266,15 @@
                     </td>
                 </tr>
                 <tr v-if="work[0].r1n !== null">
-                    <td>Первый рецензент</td>
+                    <td>Перший рецензент</td>
                     <td>
-                        <span><strong>Имя: </strong>@{{ work[0].r1n }}</span>
+                        <span><strong>ПІБ: </strong>@{{ work[0].r1n }}</span>
                         <p></p>
-                        <span><strong>Место работы: </strong>@{{ work[0].r1w }}</span>
+                        <span><strong>Місце роботи: </strong>@{{ work[0].r1w }}</span>
                         <p></p>
-                        <span><strong>Должность: </strong> @{{ work[0].r1p }}</span>
+                        <span><strong>Посада: </strong> @{{ work[0].r1p }}</span>
                         <p></p>
-                        <span><strong>Научная степень: </strong> @{{ work[0].r1d }}</span>
+                        <span><strong>Науковий ступ: </strong> @{{ work[0].r1d }}</span>
                     </td>
                     <td>
                         <div style="display: inline-block;margin-right: 20px; float: right;">
@@ -285,15 +286,15 @@
                     </td>
                 </tr>
                 <tr v-if="work[0].r2n !== null">
-                    <td>Второй рецензент</td>
+                    <td>Другий рецензент</td>
                     <td>
-                        <span><strong>Имя: </strong>@{{ work[0].r2n }}</span>
+                        <span><strong>ПІБ: </strong>@{{ work[0].r2n }}</span>
                         <p></p>
-                        <span><strong>Место работы: </strong>@{{ work[0].r2w }}</span>
+                        <span><strong>Місце роботи: </strong>@{{ work[0].r2w }}</span>
                         <p></p>
-                        <span><strong>Должность: </strong> @{{ work[0].r2p }}</span>
+                        <span><strong>Посада: </strong> @{{ work[0].r2p }}</span>
                         <p></p>
-                        <span><strong>Научная степень: </strong> @{{ work[0].r2d }}</span>
+                        <span><strong>Науковий ступ: </strong> @{{ work[0].r2d }}</span>
                     </td>
                     <td>
                         <div style="display: inline-block;margin-right: 20px; float: right;">
@@ -305,13 +306,13 @@
                     </td>
                 </tr>
                 <tr v-if="work[0].questions[0]">
-                    <td>Вопросы</td>
+                    <td>Оцінки членів ЕК</td>
                     <td colspan="2">
                         <table class="table table-sm" border="0">
                             <tr>
-                                <th>Экзаменатор</th>
-                                <th>Вопрос</th>
-                                <th>Оценка</th>
+                                <th>Екзаменатор</th>
+                                <th>Питання</th>
+                                <th>Оцінка</th>
                             </tr>
                             <tr v-for="ques in work[0].questions">
                                 <td><strong>@{{ ques.name}}</strong></td>
@@ -322,34 +323,34 @@
                     </td>
                 </tr>
                 <tr v-if="work[0].prot !== null">
-                    <td>Протокол</td>
+                    <td>Номер протоколу</td>
                     <td>
                         <h3 style="margin-left: 30%">@{{work[0].prot}}</h3>
                     </td>
                 </tr>
                 <tr v-if="work[0].rate !== null">
-                    <td>Оценка</td>
+                    <td>Ітоговий бал</td>
                     <td>
                         <h3 style="margin-left: 30%">@{{work[0].rate}}</h3>
                     </td>
                 </tr>
                 <tr v-if="work[0].rate !== null">
-                    <td>Оценка в национальной шкале</td>
+                    <td>У національній шкалі</td>
                     <td>
                         <h3 style="margin-left: 30%" v-if="work[0].rate<60">Незадовільно</h3>
                         <h3 style="margin-left: 30%" v-if="work[0].rate>=60 && work[0].rate<75">Задовільно</h3>
                         <h3 style="margin-left: 30%" v-if="work[0].rate>=75 && work[0].rate<90 ">Добре</h3>
-                        <h3 style="margin-left: 30%" v-if="work[0].rate>90">Відмінно</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>=90">Відмінно</h3>
                     </td>
                 </tr>
                 <tr v-if="work[0].rate !== null">
-                    <td>Оценка в европейской шкале</td>
+                    <td>У європейскій шкалі</td>
                     <td>
                         <h3 style="margin-left: 30%" v-if="work[0].rate<60">F</h3>
                         <h3 style="margin-left: 30%" v-if="work[0].rate>=60 && work[0].rate<75">E</h3>
                         <h3 style="margin-left: 30%" v-if="work[0].rate>=75 && work[0].rate<90 ">C</h3>
-                        <h3 style="margin-left: 30%" v-if="work[0].rate>90 && work[0].rate<96 ">B</h3>
-                        <h3 style="margin-left: 30%" v-if="work[0].rate>96">A</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>=90 && work[0].rate<96 ">B</h3>
+                        <h3 style="margin-left: 30%" v-if="work[0].rate>=96">A</h3>
                     </td>
                 </tr>
                 </tbody>
@@ -357,55 +358,56 @@
             <div>
                     <span v-if="addRev===false && (work[0].rev1===null || work[0].rev2===null)" style="margin-top: 10px"
                           class="btn btn-outline-secondary" @click="addRev=true">
-                        Добавить рецензента
+                        Додати рецензента
                     </span>
                 <div v-if="addRev===true">
                     <input v-model="newRN" type="text" class="form-control" aria-label="Name"
-                           aria-describedby="button-addon2" placeholder="ФИО">
+                           aria-describedby="button-addon2" placeholder="ПІБ">
                     <input v-model="newRW" type="text" class="form-control" aria-label="Name"
-                           aria-describedby="button-addon2" placeholder="Место работы">
+                           aria-describedby="button-addon2" placeholder="Місце роботи">
                     <input v-model="newRP" type="text" class="form-control" aria-label="Name"
-                           aria-describedby="button-addon2" placeholder="Должность">
+                           aria-describedby="button-addon2" placeholder="Посада">
                     <input v-model="newRD" type="text" class="form-control" aria-label="Name"
-                           aria-describedby="button-addon2" placeholder="Научная степень">
+                           aria-describedby="button-addon2" placeholder="Науковий ступ">
                     <button style="margin-top: 10px;" @click="addNewRev()"
-                            class="btn-sm btn-primary">Добавить
+                            class="btn-sm btn-primary">Додати
                     </button>
                 </div>
             </div>
         </div>
-        <div style="margin-top: 10%;" align="center">
-            Оповещения
+        <div v-if="typeof text[0] !== 'undefined'">
+            <div style="margin-top: 10%;" align="center">
+                Сповіщення
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Текст</th>
+                    <th scope="col">Видалити</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="item in text">
+                    <td>@{{item.date}}</td>
+                    <td>@{{item.text}}</td>
+                    <td>
+                        <div style="display: inline-block;" @click="hideNote(item)"
+                             class="btn-sm btn-danger"><i
+                                    class="fa fa-times" aria-hidden="true"></i>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div style="display: inline-block; float:right; width: 90px" @click="hideAllNotes()"
+                             class="btn-sm btn-danger">Видалити всі
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Дата</th>
-                <th scope="col">Сообщение</th>
-                <th scope="col">Удалить</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="item in text">
-                <td>@{{item.date}}</td>
-                <td>@{{item.text}}</td>
-                <td>
-                    <div style="display: inline-block;" @click="hideNote(item)"
-                         class="btn-sm btn-danger"><i
-                                class="fa fa-times" aria-hidden="true"></i>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div style="display: inline-block; float:right; width: 90px" @click="hideAllNotes()"
-                         class="btn-sm btn-danger">Удалить все
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
     </div>
 @endsection
 
@@ -483,7 +485,7 @@
                     if (item.visa) {
                         let data = {data: item};
                         this.$http.post('/api/makeNot', data);
-                        alert("Нельзя удалить руководителя если уже есть виза. Сообщение об попытке удалить отправлено руководителю");
+                        alert("Неможливо видалити роботи якщо вже стоїть віза. Запит про видалення відправлено керівнику.");
                     } else {
                         var _this = this;
                         let data = {data: item.reqID};
@@ -508,11 +510,11 @@
                 addNewRev: function () {
                     var _this = this;
                     if (this.newRD === '' || this.newRW === '' || this.newRP === '' || this.newRN === '') {
-                        return alert("Заполните все поля");
+                        return alert("Заповніть усі поля");
                         ;
                     }
                     if (this.work[0].rev1 && this.work[0].rev2) {
-                        return alert("Нет мест");
+                        return alert("Нема місць");
                         ;
                     }
                     let data = {
@@ -626,7 +628,7 @@
                                     _this.$delete(_this.text, key)
                             });
                         });
-                    } else alert("Нельзя удалить сообщение администратора");
+                    } else alert("Неможливо видалити сповіщення адміністратора");
                 },
 
                 onFileChange(e) {
@@ -649,7 +651,7 @@
                                 this.work[0].file = response.data.docName;
                             }).catch(function (respond) {
                             _this.editFile = false;
-                            alert("Неверный тип файла. Нужен docx")
+                            alert("Необхідний формат файлу - .docx")
                         });
                     }
                     this.editFile = false;

@@ -18,7 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/download/{uuid}', 'HomeController@download');
+Route::get('/download/{uuid}/name/{name}', 'HomeController@download');
 
 
 Route::prefix('student')->group(function() {

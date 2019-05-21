@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Вход') }}</div>
+                <div class="card-header">{{ __('Вхід') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
@@ -45,7 +45,7 @@
                                     <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
                                     <label class="form-check-label" for="remember">
-                                        {{ __('Запомнить меня') }}
+                                        {{ __(" Запам'ятати мене") }}
                                     </label>
                                 </div>
                             </div>
@@ -54,12 +54,12 @@
                         <div class="form-group row mb-0">
                             <div class="col-md-8 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Войти') }}
+                                    {{ __('Увійти') }}
                                 </button>
 
                                 @if (Route::has('password.request'))
                                     <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Забыли пароль?') }}
+                                        {{ __('Забули пароль?') }}
                                     </a>
                                 @endif
                             </div>
