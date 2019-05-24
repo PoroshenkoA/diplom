@@ -4,7 +4,7 @@
 
     <div class="container" id="examinerHome">
         <div v-if="works.length != 0">
-            <p style="margin-top: 20px" align="center">Работы</p>
+            <p style="margin-top: 20px" align="center">Роботи</p>
             <div style="margin-bottom: 20px" v-for="(item,key) in works">
                 <a style="margin-left: 20px" href="#" @click="item.toggle=!item.toggle">@{{item.groupName+" "+item.studName}}</a>
                 <div style="display: inline-block; float:right; margin-right: 10px">
@@ -117,7 +117,7 @@
                             </td>
                         </tr>
                         <tr v-if="item.rate !== null">
-                            <td>Ітоговий бал</td>
+                            <td>Підсумковий бал</td>
                             <td>
                                 <h3 style="margin-left: 30%">@{{item.rate}}</h3>
                             </td>

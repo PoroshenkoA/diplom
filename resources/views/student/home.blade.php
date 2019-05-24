@@ -329,7 +329,7 @@
                     </td>
                 </tr>
                 <tr v-if="work[0].rate !== null">
-                    <td>Ітоговий бал</td>
+                    <td>Підсумковий бал</td>
                     <td>
                         <h3 style="margin-left: 30%">@{{work[0].rate}}</h3>
                     </td>
@@ -400,8 +400,8 @@
                 </tr>
                 <tr>
                     <td colspan="3">
-                        <div style="display: inline-block; float:right; width: 90px" @click="hideAllNotes()"
-                             class="btn-sm btn-danger">Видалити всі
+                        <div style="display: inline-block; float:right; width: 95px" @click="hideAllNotes()"
+                             class="btn-sm btn-danger">Видалити усі
                         </div>
                     </td>
                 </tr>
@@ -511,11 +511,9 @@
                     var _this = this;
                     if (this.newRD === '' || this.newRW === '' || this.newRP === '' || this.newRN === '') {
                         return alert("Заповніть усі поля");
-                        ;
                     }
                     if (this.work[0].rev1 && this.work[0].rev2) {
                         return alert("Нема місць");
-                        ;
                     }
                     let data = {
                         name: _this.newRN,

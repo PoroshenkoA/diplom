@@ -42,7 +42,6 @@ class HomeController extends Controller
             'Content-Disposition: attachment;filename="' . $uuid . '"',
         ];
         return response()->download(storage_path('app/public/' . $uuid), $name.".docx", $headers);
-
     }
     
 }

@@ -55,7 +55,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div @click="send" class="btn btn-primary">Зберігти</div>
+                <div @click="send" class="btn btn-primary">Зберегти</div>
             </div>
             <div style="margin-left: 10%; margin-top: 20px;" v-if="students.length == 0 && works.length == 0">
                 Запитів від студентів немає.
@@ -263,7 +263,7 @@
                                 </td>
                             </tr>
                             <tr v-if="item.rate !== null">
-                                <td>Ітоговий бал</td>
+                                <td>Підсумковий бал</td>
                                 <td>
                                     <h3 style="margin-left: 30%">@{{item.rate}}</h3>
                                 </td>
@@ -428,7 +428,7 @@
                                 </td>
                             </tr>
                             <tr v-if="item.rate !== null">
-                                <td>Ітоговий бал</td>
+                                <td>Підсумковий бал</td>
                                 <td>
                                     <h3 style="margin-left: 30%">@{{item.rate}}</h3>
                                 </td>
@@ -457,7 +457,7 @@
                     </div>
                 </div>
             </div>
-            <div v-else>
+            <div style="margin-left: 10%; margin-top: 20px;" v-else>
                 <span>Робіт пока що немає.</span>
             </div>
         </div>
@@ -486,7 +486,7 @@
                 </tr>
                 <tr>
                     <td colspan="3">
-                        <div style="display: inline-block; float:right; width: 90px" @click="hideAllNotes()"
+                        <div style="display: inline-block; float:right; width: 95px" @click="hideAllNotes()"
                              class="btn-sm btn-danger">Видалити всі
                         </div>
                     </td>

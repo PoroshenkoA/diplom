@@ -30,7 +30,8 @@ class LeaderController extends Controller
     {
         DB::table("reviews")
             ->insert(['name' => $request->name, 'workplace' => $request->wp, 'degree' => $request->d, 'post' => $request->p]);
-        $rev = DB::table("reviews")->orderBy("id", "desc")->first();$rev = DB::table("reviews")->orderBy("id", "desc")->first();
+        $rev = DB::table("reviews")->orderBy("id", "desc")->first();
+        $rev = DB::table("reviews")->orderBy("id", "desc")->first();
         $id = $rev->id;
         $work = DB::table("works")
             ->select("rev1", "rev2")
@@ -51,16 +52,14 @@ class LeaderController extends Controller
         return response()->json(compact("id"));
     }
 
-    public
-    function EditGPages(Request $request)
+    public function EditGPages(Request $request)
     {
         DB::table("works")
             ->where('studentID', $request->data['studentID'])
             ->update(['graphicPages' => $request->data['graphicPages']]);
     }
 
-    public
-    function DelRev(Request $request)
+    public function DelRev(Request $request)
     {
         DB::table("works")
             ->where('rev1', $request->id)
@@ -73,16 +72,14 @@ class LeaderController extends Controller
             ->delete();
     }
 
-    public
-    function EditRealPages(Request $request)
+    public function EditRealPages(Request $request)
     {
         DB::table("works")
             ->where('studentID', $request->data['studentID'])
             ->update(['realPages' => $request->data['realPages']]);
     }
 
-    public
-    function store(Request $request)
+    public function store(Request $request)
     {
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'file' => 'mimes:docx'
@@ -114,8 +111,7 @@ class LeaderController extends Controller
         }
     }
 
-    public
-    function works()
+    public function works()
     {
         $works = DB::table("works as w")
             ->leftJoin("users as u", "w.studentID", "=", "u.id")
@@ -144,9 +140,9 @@ class LeaderController extends Controller
                 $item->newRD = '';
                 $item->newThemeEn = $item->themeEn;
                 $item->newThemeUkr = $item->themeUkr;
-                $item->questions=DB::table("questions as q")
+                $item->questions = DB::table("questions as q")
                     ->leftJoin("users as u", "q.examinerID", "=", "u.id")
-                    ->select("question","examinerRate", "u.name")
+                    ->select("question", "examinerRate", "u.name")
                     ->where("protID", $item->pID)
                     ->get();
                 return $item;
@@ -154,8 +150,7 @@ class LeaderController extends Controller
         return response()->json(compact("works"));
     }
 
-    public
-    function getType()
+    public function getType()
     {
         $type = DB::table("users")
             ->select("userTypeID")
@@ -164,8 +159,7 @@ class LeaderController extends Controller
         return response()->json(compact("type"));
     }
 
-    public
-    function updateLeaderPriority(Request $request)
+    public function updateLeaderPriority(Request $request)
     {
         foreach ($request->data as $item) {
             if ($item['visa'] !== $item['editVisa']) {
@@ -206,8 +200,7 @@ class LeaderController extends Controller
         }
     }
 
-    public
-    function leaderChangeThemeEn(Request $request)
+    public function leaderChangeThemeEn(Request $request)
     {
         $text = "Керівник " . Auth::user()->name . " змінив тему англійською з \"" . $request->data['themeEn'] . "\" на \"" . $request->data['newThemeEn'] . "\".";
         DB::table("notifications")
@@ -217,8 +210,7 @@ class LeaderController extends Controller
             ->update(['themeEn' => $request->data['newThemeEn']]);
     }
 
-    public
-    function leaderChangeThemeUkr(Request $request)
+    public function leaderChangeThemeUkr(Request $request)
     {
         $text = "Керівник " . Auth::user()->name . " змінив тему українською з \"" . $request->data['themeUkr'] . "\" на \"" . $request->data['newThemeUkr'] . "\".";
         DB::table("notifications")

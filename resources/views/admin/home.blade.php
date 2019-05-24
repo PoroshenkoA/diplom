@@ -282,7 +282,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Ітоговий бал</td>
+                                                <td>Підсумковий бал</td>
                                                 <td>
                                                     <h3>@{{item.rate}}</h3>
                                                     <div v-show="item.editTotal" class="input-group mb-3">
@@ -415,7 +415,7 @@
                     </div>
                 </div>
                 <p></p>
-                <div @click="chooseYourDestiny" class="btn btn-primary">Опрацювати усі запити</div>
+                <div @click="chooseYourDestiny" class="btn btn-primary">Опрацювати всі запити</div>
             </div>
         </div>
     </div>
