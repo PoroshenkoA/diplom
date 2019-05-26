@@ -443,9 +443,13 @@
             },
             methods: {
                 createQues: function (item) {
-                    var _this = this;
                     if (!item.newExID) {
                         alert("Оберіть керівника");
+                        return null;
+                    }
+                    if(item.newExRate<1 || item.newExRate>100) {
+                        alert("Оцінка повинна бути від 1 до 100");
+                        item.editTotal = false;
                         return null;
                     }
                     let data = {pid: item.pID, exID: item.newExID, ques: item.newQuestion, rate: item.newExRate};
@@ -489,6 +493,11 @@
                 editRate: function (item) {
                     if (!item.newTotalRate) {
                         alert("Введіть оцінку");
+                        item.editTotal = false;
+                        return null;
+                    }
+                    if(item.newTotalRate<1 || item.newTotalRate>100) {
+                        alert("Оцінка повинна бути від 1 до 100");
                         item.editTotal = false;
                         return null;
                     }

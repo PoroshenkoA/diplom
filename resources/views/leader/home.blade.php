@@ -363,7 +363,8 @@
                                 <td>Напрацювання</td>
                                 <td>
                                     <div v-show="item.file !== null && !item.editFile">
-                                        <a id="link" style="display: inline-block;" :href="'/download/'+item.file+'/name/'+item.studName"><i
+                                        <a id="link" style="display: inline-block;"
+                                           :href="'/download/'+item.file+'/name/'+item.studName"><i
                                                     class="icon-download-alt"> </i>Завантажити&nbsp;</a>
                                     </div>
                                 </td>
@@ -611,9 +612,11 @@
                     });
                 },
                 editRP: function (item) {
-                    let data = {data: item}
-                    this.$http.post('/api/leaderEditRealPages', data)
-                    item.editRealPages = false;
+                    if (!isNaN(item.realPages)) {
+                        let data = {data: item}
+                        this.$http.post('/api/leaderEditRealPages', data)
+                        item.editRealPages = false;
+                    } else return alert("Ошибка валидации");
                 },
                 delRev1: function (item) {
                     let data = {id: item.rev1}
@@ -634,9 +637,11 @@
                     item.r2d = null;
                 },
                 editGP: function (item) {
-                    let data = {data: item}
-                    this.$http.post('/api/leaderEditGPages', data)
-                    item.editPresentationPages = false;
+                    if (!isNaN(item.graphicPages)) {
+                        let data = {data: item}
+                        this.$http.post('/api/leaderEditGPages', data)
+                        item.editPresentationPages = false;
+                    } else return alert("Ошибка валидации");
                 },
                 editEn: function (item) {
                     if (item.newThemeEn !== "" && item.newThemeEn !== item.themeEn) {

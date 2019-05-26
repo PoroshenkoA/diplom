@@ -22,11 +22,11 @@ class CreateWorksTable extends Migration
             $table->string('themeUkr', 255)->nullable();
             $table->string('themeEn', 255)->nullable();
             $table->string('file', 255)->nullable();
-            $table->integer('dateID')->unsigned();
+            $table->integer('dateID')->unsigned()->nullable();
             $table->integer('realPages')->nullable();
             $table->integer('graphicPages')->nullable();
-            $table->integer('rev1')->unsigned();
-            $table->integer('rev2')->unsigned();
+            $table->integer('rev1')->unsigned()->nullable();
+            $table->integer('rev2')->unsigned()->nullable();
             $table->foreign('dateID')->references('id')->on('dateDef');
             $table->foreign('rev1')->references('id')->on('reviews');
             $table->foreign('rev2')->references('id')->on('reviews');

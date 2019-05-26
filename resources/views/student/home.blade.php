@@ -546,9 +546,11 @@
                     item.edit = false;
                 },
                 editRP: function () {
-                    let data = {data: this.work[0]}
-                    this.$http.post('/api/studEditRealPages', data)
-                    this.editRealPages = false;
+                    if (!isNaN(this.work[0].realPages)) {
+                        let data = {data: this.work[0]}
+                        this.$http.post('/api/studEditRealPages', data)
+                        this.editRealPages = false;
+                    } else return alert("Ошибка валидации");
                 },
                 delRev1: function () {
                     let data = {id: this.work[0].rev1}
@@ -569,9 +571,11 @@
                     this.work[0].r2d = null;
                 },
                 editGP: function () {
-                    let data = {data: this.work[0]}
-                    this.$http.post('/api/studEditGPages', data)
-                    this.editPresentationPages = false;
+                    if (!isNaN(this.work[0].graphicPages)) {
+                        let data = {data: this.work[0]}
+                        this.$http.post('/api/studEditGPages', data)
+                        this.editPresentationPages = false;
+                    } else return alert("Ошибка валидации");
                 },
                 editEn: function () {
                     var _this = this;

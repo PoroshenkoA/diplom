@@ -178,7 +178,7 @@ class LeaderController extends Controller
                             ->insert(['studentID' => $item['studentID'], 'leaderID' => Auth::user()->id]);
                         $id = DB::table("works")->orderBy("id", "desc")->first();
                         DB::table("protections")
-                            ->insert(['workID' => $id]);
+                            ->insert(['workID' => $id->id]);
                         DB::table("requests")
                             ->where('studentID', $item['studentID'])
                             ->delete();

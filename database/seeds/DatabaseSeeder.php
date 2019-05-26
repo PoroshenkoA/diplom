@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
         ]);
         DB::table('users')->insert([
             'name' => "Адмін",
-            'email' => "admin@nure.com",
+            'email' => "admin@nure.ua",
             'password' => "$2y$10\$wZmBWscM6/pLlFc/DAbZ8eY9EZRUmDe7YaHIYmTlS3cKmBbIm1HLm",
             'userTypeID' => 4,
             'groupID' => 1,
