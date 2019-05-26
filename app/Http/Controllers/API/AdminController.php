@@ -109,6 +109,7 @@ class AdminController extends Controller
                 $item->newRP = '';
                 $item->newRW = '';
                 $item->newRD = '';
+                $item->newProtocol = '';
                 $item->addQuestion=false;
                 $item->editDate=false;
                 $item->newQuestion='';

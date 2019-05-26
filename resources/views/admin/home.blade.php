@@ -260,7 +260,7 @@
                                                 <td>
                                                     <h3>@{{item.prot}}</h3>
                                                     <div v-show="item.editProt" class="input-group mb-3">
-                                                        <input v-model="item.prot" type="text"
+                                                        <input v-model="item.newProtocol" type="text"
                                                                class="form-control" aria-label="Name"
                                                                aria-describedby="button-addon2">
                                                         <div class="input-group-append">
@@ -499,8 +499,9 @@
                     });
                 },
                 editProt: function (item) {
-                    let data = {id: item.pID, prot: item.prot};
+                    let data = {id: item.pID, prot: item.newProtocol};
                     this.$http.post('/api/editProt', data).then(function (response) {
+                        item.prot=item.newProtocol;
                         item.editProt = false;
                     });
                 },
