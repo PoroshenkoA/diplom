@@ -13,7 +13,8 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1">За датою</span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Введіть дату yyyy-mm-dd" aria-label="Username"
+                            <input type="text" class="form-control" placeholder="Введіть дату yyyy-mm-dd"
+                                   aria-label="Username"
                                    aria-describedby="basic-addon1" v-model="date">
                             <div class="input-group-append">
                                 <button @click="getOnDate" class="btn btn-outline-secondary" type="button"
@@ -45,7 +46,32 @@
                             <p v-if="group.name!=='Керівники'">Група: @{{ group.name }}</p>
                             <p v-if="group.status">Тип навчання: @{{ group.status }}</p>
                             <p v-if="user.post">Посада: @{{ user.post }}</p>
-                            <p v-if="user.leaderLoad">Навантаження: @{{ user.leaderLoad }}</p>
+                            <div v-if="user.userTypeID === 2 || user.userTypeID === 5">
+                                <div style="display: inline-block;">Навантаження:</div>
+                                <div style="display: inline-block;" v-show="!editLoad">@{{ user.leaderLoad }}
+                                    <div style="display: inline-block;">
+                                        <div style="display: inline-block;margin-right: 20px; float: right;">
+                                            <div v-show="!editLoad" @click="editLoad=true"
+                                                 class="btn-sm btn-primary" s><i
+                                                        class="fa fa-pencil" aria-hidden="false"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display: inline-block;" v-if="editLoad" class="input-group mb-3">
+                                    <div class="input-group mb-3">
+                                        <input type="number" v-model="leaderLoad" class="form-control"
+                                               placeholder="Нагрузка" aria-label="Recipient's username"
+                                               aria-describedby="button-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button"  @click="editL()"
+                                                    id="button-addon2">OK
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p></p>
+                            </div>
                             <p v-if="user.userTypeID === 1">Роль: Студент</p>
                             <p v-if="user.userTypeID === 2">Роль: Керівник</p>
                             <p v-if="user.userTypeID === 3">Роль: Член ЕК</p>
@@ -438,16 +464,30 @@
                 group: [],
                 department: [],
                 hideNote: false,
+                editLoad: false,
+                leaderLoad: 0,
                 newNote: '',
                 avEx: [],
             },
             methods: {
+                editL: function () {
+                    if (this.leaderLoad < 1 || this.leaderLoad > 15) {
+                        alert("Навантаження повинно бути від 1 до 15");
+                        this.editLoad = false;
+                        return null;
+                    }
+                    let data = {id: this.user.id, leaderLoad: this.leaderLoad};
+                    this.$http.post('/api/editLeaderLoad', data).then(function (response) {
+                        this.user.leaderLoad = this.leaderLoad;
+                        this.editLoad = false;
+                    });
+                },
                 createQues: function (item) {
                     if (!item.newExID) {
                         alert("Оберіть керівника");
                         return null;
                     }
-                    if(item.newExRate<1 || item.newExRate>100) {
+                    if (item.newExRate < 1 || item.newExRate > 100) {
                         alert("Оцінка повинна бути від 1 до 100");
                         item.editTotal = false;
                         return null;
@@ -496,7 +536,7 @@
                         item.editTotal = false;
                         return null;
                     }
-                    if(item.newTotalRate<1 || item.newTotalRate>100) {
+                    if (item.newTotalRate < 1 || item.newTotalRate > 100) {
                         alert("Оцінка повинна бути від 1 до 100");
                         item.editTotal = false;
                         return null;
@@ -510,7 +550,7 @@
                 editProt: function (item) {
                     let data = {id: item.pID, prot: item.newProtocol};
                     this.$http.post('/api/editProt', data).then(function (response) {
-                        item.prot=item.newProtocol;
+                        item.prot = item.newProtocol;
                         item.editProt = false;
                     });
                 },
@@ -575,7 +615,7 @@
                     this.$http.post('/api/adminDelQues', data)
                         .then(function () {
                             _.forEach(_this.works, function (i, key) {
-                                if(i.id === item.id) {
+                                if (i.id === item.id) {
                                     _.forEach(_this.works[key].questions, function (i2, key2) {
                                         if (i2.id === ques.id) {
                                             _this.works[key].questions.splice(key2, 1);
@@ -624,6 +664,8 @@
                     this.works = [];
                     this.department = [];
                     this.showWhat = false;
+                    this.leaderLoad = 0;
+                    this.editLoad=false;
                     var _this = this;
                     this.$http.get('/api/adminUserNotes/' + this.name)
                         .then(function (response) {

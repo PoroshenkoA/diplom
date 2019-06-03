@@ -17,7 +17,7 @@ class CreateGroupsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name', 255);
             $table->string('status', 15);
-            $table->integer('departmentID')->unsigned();
+            $table->bigInteger('departmentID')->unsigned();
             $table->foreign('departmentID')->references('id')->on('departments');
         });
     }

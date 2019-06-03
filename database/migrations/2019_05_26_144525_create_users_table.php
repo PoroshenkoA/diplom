@@ -20,8 +20,8 @@ class CreateUsersTable extends Migration
             $table->string('password', 255);
             $table->rememberToken();
             $table->integer('leaderLoad')->nullable();
-            $table->integer('userTypeID')->unsigned();
-            $table->integer('groupID')->unsigned();
+            $table->bigInteger('userTypeID')->unsigned();
+            $table->bigInteger('groupID')->unsigned();
             $table->string('post', 100)->nullable();
             $table->timestamps();
             $table->foreign('userTypeID')->references('id')->on('userTypes');

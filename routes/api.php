@@ -32,6 +32,7 @@ Route::middleware('auth:api')->post('/editProt', 'API\AdminController@editProt')
 Route::middleware('auth:api')->post('/editRec', 'API\AdminController@editRec');
 Route::middleware('auth:api')->post('/adminChangeDate', 'API\AdminController@editDate');
 Route::middleware('auth:api')->post('/adminDelQues', 'API\AdminController@delQues');
+Route::middleware('auth:api')->post('/editLeaderLoad', 'API\AdminController@editLeaderLoad');
 
 
 Route::middleware('auth:api')->get('/work', 'API\StudentController@work');

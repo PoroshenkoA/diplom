@@ -199,6 +199,12 @@ class AdminController extends Controller
             ->where('id', $request->id)
             ->update(['recommendation' => $request->rec]);
     }
+    public function editLeaderLoad(Request $request)
+    {
+        DB::table("users")
+            ->where('id', $request->id)
+            ->update(['leaderLoad' => $request->leaderLoad]);
+    }
 
     public function delQues(Request $request)
     {

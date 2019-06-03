@@ -15,8 +15,8 @@ class CreateQuestionsTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('protID')->unsigned();
-            $table->integer('examinerID')->unsigned();
+            $table->bigInteger('protID')->unsigned();
+            $table->bigInteger('examinerID')->unsigned();
             $table->foreign('protID')->references('id')->on('protections');
             $table->foreign('examinerID')->references('id')->on('users');
             $table->text('question');

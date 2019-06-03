@@ -15,7 +15,7 @@ class CreateProtectionsTable extends Migration
     {
         Schema::create('protections', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('workID')->unsigned();
+            $table->bigInteger('workID')->unsigned();
             $table->foreign('workID')->references('id')->on('works');
             $table->string('protocol', 30)->nullable();
             $table->integer('rate')->nullable();

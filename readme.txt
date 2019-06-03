@@ -6,7 +6,8 @@ Author: Anton Poroshenko anton.poroshenko@nure.ua
 —остав проекта:
 	app/Http/Controllers - различные контроллеры.
 	app/Http/Middleware - посредники,- это фильтры обработки HTTP-запроса.
-	app/Notifications - уведомление, переопредел€л только уведомление восстановлени€ парол€.
+	app/Notifications - уве
+	домление, переопредел€л только уведомление восстановлени€ парол€.
 	database/migrations - миграции, дл€ создани€ таблиц.
 	database/seeds - дл€ наполнени€ таблиц, по сути дл€ загрузки информации о пользовател€х достаточно создать этот класс.
 	resources/views - представлени€.
@@ -15,21 +16,31 @@ Author: Anton Poroshenko anton.poroshenko@nure.ua
 
 
 <--------------------------------------------Installation----------------------------------------------------->
-1. Ќеобходимо создать файл .env в корневом каталоге проекта и указать в нем базу данных, по примеру файла .env.example
-2. ”становить laravel. composer, npm.
-2. ¬ыполнить следующие команды в терминале PhpStorm:
-	composer update --no-scripts
+
+“очно не знаю в чем проблема, у мен€ на полностью сыром ноуте все заработало, возможно дело в версии Open Server, оно не могло нормально подключитс€ к базе из-за ее версии.
+я ставил Open Server 5.3.0 Premium (php 7.3 x64, MySQL 8.0 x64, PostgreSQL 11.2 x64). –аботает как на MySQL так и на PostgreSQL.
+
+
+1. ”становить composer, npm, laravel.
+2. Ќеобходимо создать файл .env в корневом каталоге проекта и указать в нем базу данных, по примеру файла .env.example
+3. ¬ыполнить следующие команды в терминале PhpStorm:
+	composer update
 	npm install
-	php artisan passport:install
+	php artisan key:generate
 	npm run dev
 	php artisan config:cache
-	php artisan migrate
+	php artisan migrate:fresh
+	php artisan passport:install
+	npm run dev
+    php artisan config:cache
+	php artisan migrate:fresh
 	php artisan db:seed
-3. ƒобавить директорию public в Open Server в качестве домена.
-4. Ќаслаждатьс€. ¬ базе данных уже есть следующие пользователи:
+4. ƒобавить директорию public в Open Server в качестве домена.
+5. Ќаслаждатьс€. ¬ базе данных уже есть следующие пользователи:
 
 	admin@nure.ua
-	heorhii.ivashchenko@nure.ua
+	heorhii.ivashchenko@nu
+	re.ua
 	leader2@nure.ua
 	leader3@nure.ua
 	leader4@nure.ua

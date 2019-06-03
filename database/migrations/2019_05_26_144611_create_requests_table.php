@@ -18,8 +18,8 @@ class CreateRequestsTable extends Migration
             $table->boolean('visa')->default(false);
             $table->integer('studentPriority');
             $table->integer('leaderPriority')->default(2);
-            $table->integer('studentID')->unsigned();
-            $table->integer('leaderID')->unsigned();
+            $table->bigInteger('studentID')->unsigned();
+            $table->bigInteger('leaderID')->unsigned();
             $table->foreign('studentID')->references('id')->on('users');
             $table->foreign('leaderID')->references('id')->on('users');
         });
